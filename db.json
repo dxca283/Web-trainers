@@ -1,0 +1,12 @@
+{
+  "categories": [
+    { "id": 1, "name": "Nike", "image": "/banners/nike.jpg", "link": "/category/nike" },
+    { "id": 2, "name": "Adidas", "image": "/banners/adidas.jpg", "link": "/category/adidas" },
+    { "id": 3, "name": "Puma", "image": "/banners/puma.jpg", "link": "/category/puma" },
+    { "id": 4, "name": "Vans", "image": "/banners/vans.jpg", "link": "/category/vans" }
+  ],
+  "products": [
+    { "id": 1, "name": "Nike Air Max", "price": 120, "category": "Nike", "image": "/products/nike-air-max.jpg" },
+    { "id": 2, "name": "Adidas Ultraboost", "price": 150, "category": "Adidas", "image": "/products/adidas-ultraboost.jpg" }
+  ]
+}

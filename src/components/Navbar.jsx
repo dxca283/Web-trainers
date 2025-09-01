@@ -58,7 +58,7 @@ const Navbar = () => {
               Tất cả sản phẩm
             </a>
 
-            {/* Sneakers với hover dropdown bằng Tailwind */}
+            {/* Drop down menu categories */}
             <div className="relative group inline-block">
               <button className="hover:text-white font-semibold">
                 Sneakers
