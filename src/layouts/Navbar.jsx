@@ -1,4 +1,5 @@
 import { FaSearch, FaHeart, FaShoppingBag } from "react-icons/fa";
+import CategoriesMenu from '../components/CategoriesMenu'
 
 const Navbar = () => {
   return (
@@ -53,61 +54,7 @@ const Navbar = () => {
           </a>
 
           {/* Navigation / Categories */}
-          <nav className="flex flex-wrap justify-center space-x-4 font-semibold">
-            <a href="/" className="hover:text-white">
-              Tất cả sản phẩm
-            </a>
-
-            {/* Drop down menu categories */}
-            <div className="relative group inline-block">
-              <button className="hover:text-white font-semibold">
-                Sneakers
-              </button>
-
-              <ul className="absolute top-full left-0 bg-gray-800 text-gray-200 rounded-md shadow-lg w-40 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-opacity duration-200">
-                <li>
-                  <a
-                    href="/category/nike"
-                    className="block px-4 py-2 hover:bg-gray-700"
-                  >
-                    Nike
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/category/adidas"
-                    className="block px-4 py-2 hover:bg-gray-700"
-                  >
-                    Adidas
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/category/puma"
-                    className="block px-4 py-2 hover:bg-gray-700"
-                  >
-                    Puma
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/category/vans"
-                    className="block px-4 py-2 hover:bg-gray-700"
-                  >
-                    Vans
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/category/domba"
-                    className="block px-4 py-2 hover:bg-gray-700"
-                  >
-                    Domba
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </nav>
+          <CategoriesMenu />
 
           {/* Icons + Search */}
           <div className="flex items-center space-x-4">

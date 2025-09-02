@@ -27,7 +27,7 @@ const categories = [
 const HomePage = () => {
   return (
     <div className="w-full max-w-6xl mx-auto flex-1 py-6 relative">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-amber-900 via-amber-700 to-amber-900" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r " />
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         slidesPerView={1}

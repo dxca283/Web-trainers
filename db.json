@@ -1,12 +1,12 @@
 {
   "categories": [
-    { "id": 1, "name": "Nike", "image": "/banners/nike.jpg", "link": "/category/nike" },
-    { "id": 2, "name": "Adidas", "image": "/banners/adidas.jpg", "link": "/category/adidas" },
-    { "id": 3, "name": "Puma", "image": "/banners/puma.jpg", "link": "/category/puma" },
-    { "id": 4, "name": "Vans", "image": "/banners/vans.jpg", "link": "/category/vans" }
+    { "id": 1, "name": "Nike", "image": "/banners/nike.jpg" },
+    { "id": 2, "name": "Adidas", "image": "/banners/adidas.jpg" },
+    { "id": 3, "name": "Puma", "image": "/banners/puma.jpg" },
+    { "id": 4, "name": "Vans", "image": "/banners/vans.jpg" }
   ],
   "products": [
-    { "id": 1, "name": "Nike Air Max", "price": 120, "category": "Nike", "image": "/products/nike-air-max.jpg" },
-    { "id": 2, "name": "Adidas Ultraboost", "price": 150, "category": "Adidas", "image": "/products/adidas-ultraboost.jpg" }
+    { "id": 1, "name": "Nike Air Max", "price": 120, "description" : "Nike air max classic", "category_id": 1, "image": "/products/nike-air-max.jpg" },
+    { "id": 2, "name": "Adidas Ultraboost", "price": 150, "description" : "Adidas ultraboost classic", "category_id": 2, "image": "/products/adidas-ultraboost.jpg" }
   ]
 }
