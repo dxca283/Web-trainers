@@ -35,7 +35,7 @@ const HomePage = () => {
         navigation
         pagination={{ clickable: true }}
         autoplay={{ delay: 3000, disableOnInteraction: false }}
-        className="rounded-xl shadow-lg"
+        className="homepage-swiper"
       >
         {categories.map((cat, index) => (
           <SwiperSlide key={index}>
@@ -43,12 +43,10 @@ const HomePage = () => {
               <img
                 src={cat.image}
                 alt={cat.name}
-                className="w-full h-[400px] object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+                className="homepage-slide-img"
               />
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center rounded-xl">
-                <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg">
-                  {cat.name}
-                </h2>
+              <div className="homepage-slide-overlay">
+                <h2 className="homepage-slide-title">{cat.name}</h2>
               </div>
             </a>
           </SwiperSlide>
@@ -57,6 +55,5 @@ const HomePage = () => {
     </div>
   );
 };
-
 
 export default HomePage;

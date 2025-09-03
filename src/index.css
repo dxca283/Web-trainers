@@ -128,6 +128,51 @@
       @apply text-gray-100 font-medium text-base;
     }
   }
+  .homepage-swiper {
+    @apply rounded-xl shadow-lg;
+  }
+  .homepage-slide-img {
+    @apply w-full h-[400px] object-cover rounded-xl transition-transform duration-500 group-hover:scale-105;
+  }
+  .homepage-slide-overlay {
+    @apply absolute inset-0 bg-black/30 flex items-center justify-center rounded-xl;
+  }
+  .homepage-slide-title {
+    @apply text-3xl md:text-5xl font-bold text-white drop-shadow-lg;
+  }
+}
+@layer components {
+  .auth-bg {
+    @apply min-h-screen flex items-center justify-center;
+    background: #2d2d54;
+    background-image: var(--background-image-hero-pattern);
+    background-size: cover;
+    background-position: center;
+  }
+  .auth-card {
+    @apply bg-dark-100 p-8 rounded-2xl shadow-inner shadow-light-100/10 max-w-sm w-full;
+  }
+  .auth-title {
+    @apply text-3xl font-bold text-white text-center mb-6;
+  }
+  .auth-form {
+    @apply space-y-5;
+  }
+  .auth-label {
+    @apply block text-base text-light-200 mb-2;
+  }
+  .auth-input {
+    @apply w-full bg-transparent py-2 px-4 rounded-lg text-base text-white border border-light-200 outline-hidden;
+  }
+  .auth-btn {
+    @apply w-full bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-dark-100 font-bold py-2 rounded-lg transition duration-300 hover:scale-105;
+  }
+  .auth-links {
+    @apply flex justify-between mt-6;
+  }
+  .auth-link {
+    @apply text-light-200 hover:text-white text-sm;
+  }
 }
 
 @utility text-gradient {

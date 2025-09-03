@@ -1,43 +1,78 @@
 import { FaSearch, FaHeart, FaShoppingBag } from "react-icons/fa";
-import CategoriesMenu from '../components/CategoriesMenu'
+import CategoriesMenu from "../components/CategoriesMenu";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    navigate("/sign-in");
+  };
   return (
     <header className="w-full">
       {/* Top bar */}
       <div className="flex justify-between items-center px-6 py-3 bg-gray-900 text-gray-300 text-sm">
         {/* Left logo */}
-        <a href="/" className="flex items-center">
+        <Link to="/" className="flex items-center">
           <img
             src="/jordan-logo.png"
             alt="Jordan Logo"
             className="h-6 filter invert brightness-125"
           />
-        </a>
+        </Link>
 
         {/* Right links: Đăng nhập, Đăng ký, Giỏ hàng */}
         <div className="flex space-x-4 items-center">
-          <a href="/login" className="hover:text-white">
-            Đăng nhập
-          </a>
-          <a href="/register" className="hover:text-white">
-            Đăng ký
-          </a>
-          <a
-            href="/cart"
-            className="relative flex items-center hover:text-white"
-          >
-            {/* Badge số lượng */}
-            <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
-              4
-            </span>
-            <img
-              src="/cart-icon.png"
-              alt="cart-icon"
-              className="h-4 w-4 mr-1"
-            />
-            Giỏ hàng
-          </a>
+          {user ? (
+            <>
+              <span className="text-white">Xin chào, {user.username}</span>
+              <button
+                onClick={handleLogout}
+                className="hover:text-white text-red-400"
+              >
+                Đăng xuất
+              </button>
+              <Link
+                to="/cart"
+                className="relative flex items-center hover:text-white"
+              >
+                <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
+                  4
+                </span>
+                <img
+                  src="/cart-icon.png"
+                  alt="cart-icon"
+                  className="h-4 w-4 mr-1"
+                />
+                Giỏ hàng
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/sign-in" className="hover:text-white">
+                Đăng nhập
+              </Link>
+              <Link to="/sign-up" className="hover:text-white">
+                Đăng ký
+              </Link>
+              <Link
+                to="/cart"
+                className="relative flex items-center hover:text-white"
+              >
+                <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
+                  4
+                </span>
+                <img
+                  src="/cart-icon.png"
+                  alt="cart-icon"
+                  className="h-4 w-4 mr-1"
+                />
+                Giỏ hàng
+              </Link>
+            </>
+          )}
         </div>
       </div>
 
@@ -45,13 +80,13 @@ const Navbar = () => {
       <div className="bg-gray-800 text-gray-300 px-6 py-4 relative">
         <div className="container mx-auto flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           {/* Logo */}
-          <a href="/" className="flex items-center mb-2 md:mb-0">
+          <Link to="/" className="flex items-center mb-2 md:mb-0">
             <img
               src="/nike-logo.png"
               alt="Nike Logo"
               className="h-10 md:h-12 filter invert brightness-125"
             />
-          </a>
+          </Link>
 
           {/* Navigation / Categories */}
           <CategoriesMenu />

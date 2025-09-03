@@ -1,12 +1,62 @@
 {
   "categories": [
-    { "id": 1, "name": "Nike", "image": "/banners/nike.jpg" },
-    { "id": 2, "name": "Adidas", "image": "/banners/adidas.jpg" },
-    { "id": 3, "name": "Puma", "image": "/banners/puma.jpg" },
-    { "id": 4, "name": "Vans", "image": "/banners/vans.jpg" }
+    {
+      "id": 1,
+      "name": "Nike",
+      "image": "/banners/nike.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Adidas",
+      "image": "/banners/adidas.jpg"
+    },
+    {
+      "id": 3,
+      "name": "Puma",
+      "image": "/banners/puma.jpg"
+    },
+    {
+      "id": 4,
+      "name": "Vans",
+      "image": "/banners/vans.jpg"
+    }
   ],
   "products": [
-    { "id": 1, "name": "Nike Air Max", "price": 120, "description" : "Nike air max classic", "category_id": 1, "image": "/products/nike-air-max.jpg" },
-    { "id": 2, "name": "Adidas Ultraboost", "price": 150, "description" : "Adidas ultraboost classic", "category_id": 2, "image": "/products/adidas-ultraboost.jpg" }
+    {
+      "id": 1,
+      "name": "Nike Air Max",
+      "price": 120,
+      "description": "Nike air max classic",
+      "category_id": 1,
+      "image": "/products/nike-air-max.jpg"
+    },
+    {
+      "id": 2,
+      "name": "Adidas Ultraboost",
+      "price": 150,
+      "description": "Adidas ultraboost classic",
+      "category_id": 2,
+      "image": "/products/adidas-ultraboost.jpg"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123456",
+      "full_name": "Nguyen Thanh Tung",
+      "email": "admin@gmail.com",
+      "phone": "0902686792",
+      "address": "Quan Tan Phu",
+      "role": "admin"
+    },
+    {
+      "id": "4366",
+      "fullname": "Nguyen Van D",
+      "username": "asd123",
+      "email": "123@gmail.com",
+      "password": "123456",
+      "address": "ABC tan binh"
+    }
   ]
 }
