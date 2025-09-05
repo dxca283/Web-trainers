@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ProductCard from "../components/ProductCard";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -41,16 +42,7 @@ const ProductsPage = () => {
         <div className="all-products">
           <ul>
             {products.map((product) => (
-              <li key={product.id} className="product-card">
-                <a href={`/product/${product.id}`}>
-                  <img src={product.image} alt={product.name} />
-                  <h3>{product.name}</h3>
-                  <div className="content">
-                    <span>{product.price.toLocaleString("vi-VN")} ₫</span>
-                    {/* Nếu có thêm rating, year, brand thì để ở đây */}
-                  </div>
-                </a>
-              </li>
+              <ProductCard key={product.id} product={product} />
             ))}
           </ul>
         </div>

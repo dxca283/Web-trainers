@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { registerApi } from "../api/authApi.js";
+import { registerApi } from "../services/authApi.js";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -112,7 +112,7 @@ const RegisterPage = () => {
               required
             />
           </div>
-           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
           <button type="submit" className="auth-btn">
             Đăng ký
           </button>

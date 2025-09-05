@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
+
 
 const CategoryPage = () => {
-  const { id } = useParams(); // id lấy từ URL /categories/:id
+  const { category_id } = useParams(); // id lấy từ URL /categories/:id
   const [category, setCategory] = useState(null);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,14 +13,14 @@ const CategoryPage = () => {
     const fetchCategoryAndProducts = async () => {
       try {
         // Lấy category theo id
-        const catRes = await fetch(`http://localhost:5000/categories/${id}`);
+        const catRes = await fetch(`http://localhost:5000/categories/${category_id}`);
         if (!catRes.ok) throw new Error("Category not found");
         const catData = await catRes.json();
         setCategory(catData);
 
         // Lấy products theo category_id
         const prodRes = await fetch(
-          `http://localhost:5000/products?category_id=${id}`
+          `http://localhost:5000/products?category_id=${category_id}`
         );
         const prodData = await prodRes.json();
         setProducts(prodData);
@@ -30,7 +32,7 @@ const CategoryPage = () => {
     };
 
     fetchCategoryAndProducts();
-  }, [id]);
+  }, [category_id]);
 
   if (loading) return <p>Đang tải...</p>;
 
@@ -41,19 +43,13 @@ const CategoryPage = () => {
       </h1>
 
       {products.length === 0 ? (
-        <p className="text-gradient">Chưa có sản phẩm nào trong danh mục này.</p>
+        <p className="text-gradient">
+          Chưa có sản phẩm nào trong danh mục này.
+        </p>
       ) : (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {products.map((product) => (
-            <div key={product.id} className="product-card">
-              <img src={product.image} alt={product.name} />
-              <div className="p-4">
-                <h3>{product.name}</h3>
-                <div className="content">
-                  <span>{product.price.toLocaleString("vi-VN")} ₫</span>
-                </div>
-              </div>
-            </div>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       )}

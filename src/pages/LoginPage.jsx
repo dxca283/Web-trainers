@@ -1,4 +1,4 @@
-import { loginApi } from "../api/authApi.js";
+import { loginApi } from "../services/authApi.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 const LoginPage = () => {
@@ -16,7 +16,7 @@ const LoginPage = () => {
     setError("");
     try {
       const user = await loginApi(form.username, form.password);
-      localStorage.setItem("user", JSON.stringify(user)); 
+      localStorage.setItem("user", JSON.stringify(user));
       navigate("/");
     } catch (error) {
       console.error("Dang nhap that bai", error);

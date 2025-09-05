@@ -1,8 +1,13 @@
 import { FaSearch, FaHeart, FaShoppingBag } from "react-icons/fa";
 import CategoriesMenu from "../components/CategoriesMenu";
 import { Link, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { CartContext } from "../context/CartContext"; // đường dẫn tuỳ dự án
 
 const Navbar = () => {
+  const { cart } = useContext(CartContext);
+  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -39,7 +44,7 @@ const Navbar = () => {
                 className="relative flex items-center hover:text-white"
               >
                 <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
-                  4
+                  ${cartCount}
                 </span>
                 <img
                   src="/cart-icon.png"
@@ -62,7 +67,7 @@ const Navbar = () => {
                 className="relative flex items-center hover:text-white"
               >
                 <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
-                  4
+                  {cartCount}
                 </span>
                 <img
                   src="/cart-icon.png"

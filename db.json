@@ -1,29 +1,29 @@
 {
   "categories": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Nike",
       "image": "/banners/nike.jpg"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Adidas",
       "image": "/banners/adidas.jpg"
     },
     {
-      "id": 3,
+      "id": "3",
       "name": "Puma",
       "image": "/banners/puma.jpg"
     },
     {
-      "id": 4,
+      "id": "4",
       "name": "Vans",
       "image": "/banners/vans.jpg"
     }
   ],
   "products": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Nike Air Max",
       "price": 120,
       "description": "Nike air max classic",
@@ -31,7 +31,7 @@
       "image": "/products/nike-air-max.jpg"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Adidas Ultraboost",
       "price": 150,
       "description": "Adidas ultraboost classic",
@@ -41,7 +41,7 @@
   ],
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "admin",
       "password": "123456",
       "full_name": "Nguyen Thanh Tung",
@@ -57,6 +57,31 @@
       "email": "123@gmail.com",
       "password": "123456",
       "address": "ABC tan binh"
+    }
+  ],
+  "sizes": [
+    {
+      "id": "3",
+      "size_label": "42"
+    }
+  ],
+  "cart": [
+    {
+      "id": "1",
+      "user_id": 1,
+      "product_id": 1,
+      "quantity": 1,
+      "size_id": 3,
+      "product": {
+        "id": 5,
+        "name": "Nike Air Max",
+        "price": 120,
+        "image": "/products/nike-air-max.jpg"
+      },
+      "size": {
+        "id": 3,
+        "size_label": "42"
+      }
     }
   ]
 }

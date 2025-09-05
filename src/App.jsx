@@ -11,6 +11,9 @@ import ProductsPage from "./pages/ProductsPage";
 import CategoryPage from "./pages/CategoryPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import ProductDetailPage from "./pages/ProductDetailPage";
+import CartPage from "./pages/CartPage";
+
 
 function App() {
   const router = createBrowserRouter(
@@ -18,7 +21,9 @@ function App() {
       <Route path="/" element={<MainLayout />}>
         <Route index element={<HomePage />} />
         <Route path="products" element={<ProductsPage />} />
-        <Route path="/categories/:id" element={<CategoryPage />} />
+        <Route path="/categories/:category_id" element={<CategoryPage />} />
+        <Route path="/product/:product_id" element={<ProductDetailPage />} /> 
+        <Route path="/cart" element={<CartPage />} />
         <Route path="/sign-in" element={<LoginPage />} />
         <Route path="/sign-up" element={<RegisterPage />} />
         <Route
