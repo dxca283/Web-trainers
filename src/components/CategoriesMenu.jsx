@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { getCategories } from "../services/categoryApi.js";
 
 export default function CategoriesMenu() {
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      const res = await fetch("http://localhost:5000/categories");
-      const data = await res.json();
-      setCategories(data);
+    const fetchData = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Failed to load categories", err);
+      }
     };
-    fetchCategories();
+    fetchData();
   }, []);
 
   return (

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import { getProductsByCategory } from "../services/prodApi.js";
+import { getCategoryById } from "../services/categoryApi.js";
+
 
 
 const CategoryPage = () => {
@@ -12,17 +15,10 @@ const CategoryPage = () => {
   useEffect(() => {
     const fetchCategoryAndProducts = async () => {
       try {
-        // Lấy category theo id
-        const catRes = await fetch(`http://localhost:5000/categories/${category_id}`);
-        if (!catRes.ok) throw new Error("Category not found");
-        const catData = await catRes.json();
+        const catData = await getCategoryById(category_id);
         setCategory(catData);
 
-        // Lấy products theo category_id
-        const prodRes = await fetch(
-          `http://localhost:5000/products?category_id=${category_id}`
-        );
-        const prodData = await prodRes.json();
+        const prodData = await getProductsByCategory(category_id);
         setProducts(prodData);
       } catch (err) {
         console.error("Lỗi fetch:", err);

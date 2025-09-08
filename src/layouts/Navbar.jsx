@@ -2,17 +2,18 @@ import { FaSearch, FaHeart, FaShoppingBag } from "react-icons/fa";
 import CategoriesMenu from "../components/CategoriesMenu";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
-import { CartContext } from "../context/CartContext"; // đường dẫn tuỳ dự án
+import  CartContext  from "../context/CartContext"; 
+import  AuthContext  from "../context/AuthContext";
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
+  const {user, logout} = useContext(AuthContext);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    logout();
     navigate("/sign-in");
   };
   return (

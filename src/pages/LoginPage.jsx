@@ -1,6 +1,7 @@
 import { loginApi } from "../services/authApi.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../hooks/useAuth.js";
 const LoginPage = () => {
   const [form, setForm] = useState({
     username: "",
@@ -8,6 +9,10 @@ const LoginPage = () => {
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  const { login } = useAuth();
+
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
@@ -16,7 +21,7 @@ const LoginPage = () => {
     setError("");
     try {
       const user = await loginApi(form.username, form.password);
-      localStorage.setItem("user", JSON.stringify(user));
+      login(user);
       navigate("/");
     } catch (error) {
       console.error("Dang nhap that bai", error);

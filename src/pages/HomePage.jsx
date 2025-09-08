@@ -1,30 +1,28 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-
-const categories = [
-  {
-    name: "Nike",
-    image: "/banners/nike.jpg",
-    link: "/category/nike",
-  },
-  {
-    name: "Adidas",
-    image: "/banners/adidas.jpg",
-    link: "/category/adidas",
-  },
-  {
-    name: "Puma",
-    image: "/banners/puma.jpg",
-    link: "/category/puma",
-  },
-  {
-    name: "Vans",
-    image: "/banners/vans.jpg",
-    link: "/category/vans",
-  },
-];
+import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { getCategories } from "../services/categoryApi";
 
 const HomePage = () => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        console.error("Lỗi khi fetch categories:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+  if (loading) return <p className="text-center py-6">Đang tải...</p>;
   return (
     <div className="w-full max-w-6xl mx-auto flex-1 py-6 relative">
       <div className="absolute inset-0 -z-10 bg-gradient-to-r " />
@@ -37,18 +35,18 @@ const HomePage = () => {
         autoplay={{ delay: 3000, disableOnInteraction: false }}
         className="homepage-swiper"
       >
-        {categories.map((cat, index) => (
-          <SwiperSlide key={index}>
-            <a href={cat.link} className="block relative group">
+        {categories.map((cat) => (
+          <SwiperSlide key={cat.id}>
+            <Link to={`/categories/${cat.id}`} className="block relative group">
               <img
-                src={cat.image}
+                src={cat.banner_url}
                 alt={cat.name}
                 className="homepage-slide-img"
               />
               <div className="homepage-slide-overlay">
                 <h2 className="homepage-slide-title">{cat.name}</h2>
               </div>
-            </a>
+            </Link>
           </SwiperSlide>
         ))}
       </Swiper>

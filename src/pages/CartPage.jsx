@@ -1,4 +1,4 @@
-import { useCart } from "../hooks/useCart";
+import { useCart } from "../hooks/useCart.js";
 const CartPage = () => {
   const { cart, loading, updateQuantity, removeItem, total } = useCart();
 

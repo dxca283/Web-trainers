@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard";
+import { getProducts } from "../services/prodApi.js";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
@@ -8,19 +9,14 @@ const ProductsPage = () => {
   useEffect(() => {
     const fetchProds = async () => {
       try {
-        const res = await fetch("http://localhost:5000/products");
-        if (!res.ok) {
-          throw new Error("Fail to fetch products");
-        }
-        const data = await res.json();
+        const data = await getProducts();
         setProducts(data || []);
       } catch (error) {
-        console.log("Error fetching products", error);
+        console.error("Error fetching products", error);
       } finally {
         setLoading(false);
       }
     };
-
     fetchProds();
   }, []);
 

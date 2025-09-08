@@ -1,4 +1,4 @@
-import React from "react";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
@@ -17,10 +17,18 @@ const Footer = () => {
         <div className="mb-6 md:mb-0">
           <h2 className="text-lg font-semibold mb-2">Liên kết</h2>
           <ul>
-            <li className="hover:text-white transition-colors"><a href="/">Trang chủ</a></li>
-            <li className="hover:text-white transition-colors"><a href="/shop">Sản phẩm</a></li>
-            <li className="hover:text-white transition-colors"><a href="/about">Về chúng tôi</a></li>
-            <li className="hover:text-white transition-colors"><a href="/contact">Liên hệ</a></li>
+            <li className="hover:text-white transition-colors">
+              <Link to="/">Trang chủ</Link>
+            </li>
+            <li className="hover:text-white transition-colors">
+              <Link to="/products">Sản phẩm</Link>
+            </li>
+            <li className="hover:text-white transition-colors">
+              <Link to="/about">Về chúng tôi</Link>
+            </li>
+            <li className="hover:text-white transition-colors">
+              <Link to="/contact">Liên hệ</Link>
+            </li>
           </ul>
         </div>
 
@@ -28,9 +36,9 @@ const Footer = () => {
         <div className="mb-6 md:mb-0">
           <h2 className="text-lg font-semibold mb-2">Theo dõi chúng tôi</h2>
           <div className="flex space-x-4">
-            <a href="#" className="hover:text-white transition-colors">Facebook</a>
-            <a href="#" className="hover:text-white transition-colors">Instagram</a>
-            <a href="#" className="hover:text-white transition-colors">Twitter</a>
+            <a href="https://facebook.com" target="_blank">Facebook</a>
+            <a href="https://instagram.com" target="_blank">Instagram</a>
+            <a href="https://twitter.com" target="_blank">Twitter</a>
           </div>
         </div>
 

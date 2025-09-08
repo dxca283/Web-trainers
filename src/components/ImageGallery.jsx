@@ -18,7 +18,7 @@ const ImageGallery = ({ images }) => {
           <img
             key={i}
             src={img}
-            alt={`thumb-${i}`}
+            alt={`thumb-${i + 1}`}
             className={`h-20 object-cover rounded-lg cursor-pointer border-2 ${
               img === selected ? "border-blue-500" : "border-transparent"
             }`}

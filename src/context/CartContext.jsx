@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { getCart, updateCartItem, deleteCartItem } from "../services/cartApi.js";
 
-export const CartContext = createContext();
+const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
@@ -54,3 +54,5 @@ export const CartProvider = ({ children }) => {
     </CartContext.Provider>
   );
 };
+
+export default CartContext;

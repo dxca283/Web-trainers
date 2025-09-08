@@ -4,11 +4,12 @@ import { registerApi } from "../services/authApi.js";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
-    fullname: "",
+    full_name: "",
     username: "",
     email: "",
     password: "",
     address: "",
+    phone: "",
   });
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -43,11 +44,11 @@ const RegisterPage = () => {
             </label>
             <input
               type="text"
-              id="fullname"
+              id="full_name"
               className="auth-input"
               placeholder="Nhập họ và tên"
               autoComplete="name"
-              value={form.fullname}
+              value={form.full_name}
               onChange={handleChange}
               required
             />
@@ -78,6 +79,21 @@ const RegisterPage = () => {
               placeholder="Nhập email"
               autoComplete="email"
               value={form.email}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="auth-label">
+              Số điện thoại
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              className="auth-input"
+              placeholder="Nhập số điện thoại"
+              autoComplete="tel"
+              value={form.phone}
               onChange={handleChange}
               required
             />

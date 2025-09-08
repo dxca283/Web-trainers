@@ -1,16 +1,24 @@
 
-//Sign-in
+
+// authApi.js
 export const loginApi = async (username, password) => {
   try {
-    const res = await fetch(
-      `http://localhost:5000/users?username=${username}&password=${password}`
-    );
+    const res = await fetch("http://localhost:5500/api/v1/auth/sign-in", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
+
     const data = await res.json();
 
-    if (res.ok && data.length > 0) {
-      return data[0]; 
+    if (res.ok) {
+      // data chứa token và thông tin user
+      return data;
     } else {
-      throw new Error("Sai tên đăng nhập hoặc mật khẩu");
+      // lỗi từ server, ví dụ sai username/password
+      throw new Error(data.message || "Đăng nhập thất bại");
     }
   } catch (err) {
     console.error(err);
@@ -18,20 +26,26 @@ export const loginApi = async (username, password) => {
   }
 };
 
-// Sign-up
+
 export const registerApi = async (userData) => {
   try {
-    const res = await fetch("http://localhost:5000/users", {
+    const res = await fetch("http://localhost:5500/api/v1/auth/sign-up", {
       method: "POST",
       headers: {
-        "Content-type": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(userData),
     });
 
-    if (!res.ok) throw new Error("Không thể đăng ký");
-    return await res.json(); 
-  } catch {
-    throw new Error("Lỗi kết nối server");
+    const data = await res.json();
+
+    if (res.ok) {
+      return data; // trả về { message, userId }
+    } else {
+      throw new Error(data.message || "Đăng ký thất bại");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error("Không thể kết nối tới server");
   }
 };
