@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { registerApi } from "../services/authApi.js";
+import { toast } from "react-toastify";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -8,28 +9,34 @@ const RegisterPage = () => {
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
     address: "",
     phone: "",
   });
-  const [error, setError] = useState("");
+
   const navigate = useNavigate();
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
+
+    // Kiểm tra confirm password
+    if (form.password !== form.confirmPassword) {
+      toast.error("Mật khẩu nhập lại không khớp");
+      return;
+    }
 
     try {
-      const newUser = await registerApi(form);
+      const { confirmPassword, ...userData } = form;
+      await registerApi(userData);
 
-      // Lưu user vào localStorage sau khi đăng ký
-      localStorage.setItem("user", JSON.stringify(newUser));
-
-      // Điều hướng sang trang chủ
-      navigate("/");
+      toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
+      navigate("/sign-in");
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message || "Đăng ký thất bại");
     }
   };
 
@@ -53,6 +60,7 @@ const RegisterPage = () => {
               required
             />
           </div>
+
           <div>
             <label htmlFor="username" className="auth-label">
               Username
@@ -68,6 +76,7 @@ const RegisterPage = () => {
               required
             />
           </div>
+
           <div>
             <label htmlFor="email" className="auth-label">
               Email
@@ -83,6 +92,7 @@ const RegisterPage = () => {
               required
             />
           </div>
+
           <div>
             <label htmlFor="phone" className="auth-label">
               Số điện thoại
@@ -98,6 +108,7 @@ const RegisterPage = () => {
               required
             />
           </div>
+
           <div>
             <label htmlFor="password" className="auth-label">
               Mật khẩu
@@ -113,6 +124,23 @@ const RegisterPage = () => {
               required
             />
           </div>
+
+          <div>
+            <label htmlFor="confirmPassword" className="auth-label">
+              Nhập lại mật khẩu
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              className="auth-input"
+              placeholder="Nhập lại mật khẩu"
+              autoComplete="new-password"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
           <div>
             <label htmlFor="address" className="auth-label">
               Địa chỉ
@@ -128,11 +156,12 @@ const RegisterPage = () => {
               required
             />
           </div>
-          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+
           <button type="submit" className="auth-btn">
             Đăng ký
           </button>
         </form>
+
         <div className="auth-links">
           <Link to="/sign-in" className="auth-link">
             Đăng nhập
@@ -145,4 +174,5 @@ const RegisterPage = () => {
     </div>
   );
 };
+
 export default RegisterPage;

@@ -1,5 +1,3 @@
-
-
 // authApi.js
 export const loginApi = async (username, password) => {
   try {
@@ -14,18 +12,16 @@ export const loginApi = async (username, password) => {
     const data = await res.json();
 
     if (res.ok) {
-      // data chứa token và thông tin user
-      return data;
+      return data; // data chứa token và thông tin user
     } else {
-      // lỗi từ server, ví dụ sai username/password
       throw new Error(data.message || "Đăng nhập thất bại");
     }
   } catch (err) {
     console.error(err);
-    throw new Error("Không thể kết nối tới server");
+    // Giữ lại message gốc nếu có
+    throw new Error(err.message || "Không thể kết nối tới server");
   }
 };
-
 
 export const registerApi = async (userData) => {
   try {
@@ -40,12 +36,35 @@ export const registerApi = async (userData) => {
     const data = await res.json();
 
     if (res.ok) {
-      return data; // trả về { message, userId }
+      return data; // { message, userId }
     } else {
       throw new Error(data.message || "Đăng ký thất bại");
     }
   } catch (err) {
     console.error(err);
-    throw new Error("Không thể kết nối tới server");
+    throw new Error(err.message || "Không thể kết nối tới server");
+  }
+};
+
+export const changePasswordApi = async (data) => {
+  try {
+    const response = await fetch(`http://localhost:5500/api/v1/users/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      // Nếu server trả lỗi, lấy thông báo lỗi
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Lỗi khi đổi mật khẩu");
+    }
+
+    const result = await response.json();
+    return result; // ví dụ { message: "Đổi mật khẩu thành công" }
+  } catch (error) {
+    throw new Error(error.message || "Lỗi khi gọi API");
   }
 };

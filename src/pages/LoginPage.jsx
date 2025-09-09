@@ -12,7 +12,6 @@ const LoginPage = () => {
 
   const { login } = useAuth();
 
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
@@ -24,8 +23,8 @@ const LoginPage = () => {
       login(user);
       navigate("/");
     } catch (error) {
-      console.error("Dang nhap that bai", error);
-      setError("Dang nhap khong thanh cong");
+      console.error("Đăng nhập thất bại:", error);
+      setError(error.message || "Đăng nhập không thành công");
     }
   };
   return (
@@ -74,6 +73,9 @@ const LoginPage = () => {
           </Link>
           <Link to="/" className="auth-link">
             Về trang chủ
+          </Link>
+          <Link to="/forgot-password" className="auth-link">
+            Quên mật khẩu
           </Link>
         </div>
       </div>

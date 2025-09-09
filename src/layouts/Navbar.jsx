@@ -41,6 +41,12 @@ const Navbar = () => {
                 Đăng xuất
               </button>
               <Link
+                to="/change-password"
+                className="hover:text-white"
+              >
+                Đổi mật khẩu
+              </Link>
+              <Link
                 to="/cart"
                 className="relative flex items-center hover:text-white"
               >

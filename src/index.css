@@ -168,7 +168,7 @@
     @apply w-full bg-gradient-to-r from-[#D6C7FF] to-[#AB8BFF] text-dark-100 font-bold py-2 rounded-lg transition duration-300 hover:scale-105;
   }
   .auth-links {
-    @apply flex justify-between mt-6;
+    @apply flex justify-between mt-6 gap-x-4;
   }
   .auth-link {
     @apply text-light-200 hover:text-white text-sm;

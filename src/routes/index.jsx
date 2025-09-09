@@ -7,6 +7,10 @@ import CartPage from "../pages/CartPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import ProtectedRoute from "./ProtectedRoute";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
+import CheckEmailPage from "../pages/CheckEmailPage";
+import ChangePasswordPage from "../pages/ChangePasswordPage";
 
 export const routes = [
   {
@@ -27,6 +31,17 @@ export const routes = [
       },
       { path: "sign-in", element: <LoginPage /> },
       { path: "sign-up", element: <RegisterPage /> },
+      { path: "forgot-password", element: <ForgotPasswordPage /> },
+      { path: "reset-password", element: <ResetPasswordPage /> },
+      { path: "check-email", element: <CheckEmailPage /> },
+      {
+        path: "change-password",
+        element: (
+          <ProtectedRoute>
+            <ChangePasswordPage />
+          </ProtectedRoute>
+        ),
+      },
       { path: "about", element: <h1>About Page</h1> },
       { path: "contact", element: <h1>Contact Page</h1> },
     ],
