@@ -16,15 +16,15 @@ const CartPage = () => {
             {cart.map((item) => (
               <div key={item.id} className="flex items-center bg-gray-800 p-4 rounded-lg">
                 <img
-                  src={item.product.image}
-                  alt={item.product.name}
+                  src={item.image}
+                  alt={item.name}
                   className="w-24 h-24 object-cover rounded"
                 />
                 <div className="ml-4 flex-1">
-                  <h3 className="text-white">{item.product.name}</h3>
-                  <p className="text-gray-400">Size: {item.size?.size_label || "N/A"}</p>
+                  <h3 className="text-white">{item.name}</h3>
+                  <p className="text-gray-400">Size: {item.size_label || "N/A"}</p>
                   <p className="text-yellow-400 font-bold">
-                    {item.product.price.toLocaleString("vi-VN")} ₫
+                    {item.price.toLocaleString("vi-VN")} ₫
                   </p>
                 </div>
 

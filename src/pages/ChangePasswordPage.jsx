@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { changePassword } from "../services/authApi.js";
 
 const ChangePasswordPage = () => {
-
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,26 +18,16 @@ const ChangePasswordPage = () => {
     }
 
     try {
-      const token = localStorage.getItem("token"); // nếu backend yêu cầu token
-      const res = await fetch("http://localhost:5500/api/v1/users/change-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // nếu API cần xác thực
-        },
-        body: JSON.stringify({ oldPassword, newPassword  }),
-      });
+      const { ok, data } = await changePassword(oldPassword, newPassword);
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (ok) {
         toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
         setTimeout(() => navigate("/"), 2000);
       } else {
         toast.error(data.message || "Đổi mật khẩu thất bại");
       }
     } catch (err) {
-      toast.error("Không thể kết nối tới server");
+      toast.error(err.message);
     }
   };
 
@@ -70,7 +60,9 @@ const ChangePasswordPage = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <button type="submit" className="auth-btn">Xác nhận</button>
+          <button type="submit" className="auth-btn">
+            Xác nhận
+          </button>
         </form>
       </div>
     </div>

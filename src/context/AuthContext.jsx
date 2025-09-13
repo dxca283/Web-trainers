@@ -5,8 +5,8 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true); // 👈 thêm loading
 
-  // Khi app load lại thì lấy user và token từ localStorage
   useEffect(() => {
     const savedUser = localStorage.getItem("user");
     const savedToken = localStorage.getItem("token");
@@ -14,9 +14,9 @@ export const AuthProvider = ({ children }) => {
       setUser(JSON.parse(savedUser));
       setToken(savedToken);
     }
+    setLoading(false); // 👈 xong rồi mới cho render
   }, []);
 
-  // login nhận về object { user, token } từ API
   const login = ({ user, token }) => {
     localStorage.setItem("user", JSON.stringify(user));
     localStorage.setItem("token", token);
@@ -32,9 +32,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, token, login, logout, loading }}>
+      {!loading && children} 
     </AuthContext.Provider>
   );
 };
+
 export default AuthContext;

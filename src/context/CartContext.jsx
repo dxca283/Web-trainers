@@ -1,5 +1,9 @@
 import { createContext, useState, useEffect } from "react";
-import { getCart, updateCartItem, deleteCartItem } from "../services/cartApi.js";
+import {
+  getCart,
+  updateCartItem,
+  deleteCartItem,
+} from "../services/cartApi.js";
 
 const CartContext = createContext();
 
@@ -11,7 +15,7 @@ export const CartProvider = ({ children }) => {
     const fetchCart = async () => {
       try {
         const data = await getCart();
-        setCart(data);
+        setCart(data.cart); // lấy đúng field từ backend
       } catch (err) {
         console.error("Lỗi tải giỏ hàng:", err);
       } finally {
@@ -23,12 +27,10 @@ export const CartProvider = ({ children }) => {
 
   const updateQuantity = async (itemId, newQty) => {
     if (newQty < 1) return;
-    const item = cart.find((c) => c.id === itemId);
     try {
-      const updated = await updateCartItem(itemId, { ...item, quantity: newQty });
-      setCart((prev) =>
-        prev.map((c) => (c.id === itemId ? updated : c))
-      );
+      const updated = await updateCartItem(itemId, { quantity: newQty });
+
+      setCart((prev) => prev.map((c) => (c.id === itemId ? updated : c)));
     } catch (err) {
       console.error("Lỗi cập nhật:", err);
     }
@@ -49,7 +51,9 @@ export const CartProvider = ({ children }) => {
   );
 
   return (
-    <CartContext.Provider value={{ cart, loading, updateQuantity, removeItem, total }}>
+    <CartContext.Provider
+      value={{ cart, loading, updateQuantity, removeItem, total }}
+    >
       {children}
     </CartContext.Provider>
   );

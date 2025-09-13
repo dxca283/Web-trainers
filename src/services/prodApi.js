@@ -3,8 +3,15 @@ const API_URL = "http://localhost:5500/api/v1/products";
 
 // Lấy tất cả sản phẩm
 export const getProducts = async () => {
+   const token = localStorage.getItem("token");
   try {
-    const res = await fetch(API_URL); 
+    const res = await fetch("http://localhost:5500/api/v1/products", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`, 
+    },
+  });
     if (!res.ok) throw new Error("Failed to fetch products");
     return await res.json();
   } catch (err) {

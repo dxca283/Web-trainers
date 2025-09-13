@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
+import { resetPassword } from "../services/authApi.js";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -16,23 +17,17 @@ const ResetPasswordPage = () => {
       return;
     }
 
-    try {
-      const res = await fetch("http://localhost:5500/api/v1/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword: password }),
-      });
+     try {
+      const { ok, data } = await resetPassword(token, password);
 
-      const data = await res.json();
-
-      if (res.ok) {
+      if (ok) {
         toast.success(data.message || "Đổi mật khẩu thành công");
         setTimeout(() => navigate("/sign-in"), 2000);
       } else {
         toast.error(data.message || "Có lỗi xảy ra");
       }
     } catch (err) {
-      toast.error("Không thể kết nối tới server");
+      toast.error(err.message);
     }
   };
 

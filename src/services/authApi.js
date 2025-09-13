@@ -5,8 +5,10 @@ export const loginApi = async (username, password) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+
       },
       body: JSON.stringify({ username, password }),
+      credentials: "include",
     });
 
     const data = await res.json();
@@ -66,5 +68,57 @@ export const changePasswordApi = async (data) => {
     return result; // ví dụ { message: "Đổi mật khẩu thành công" }
   } catch (error) {
     throw new Error(error.message || "Lỗi khi gọi API");
+  }
+};
+
+export const resetPassword = async (token, password) => {
+  try {
+    const res = await fetch("http://localhost:5500/api/v1/auth/reset-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ token, newPassword: password }),
+    });
+
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Không thể kết nối tới server");
+  }
+};
+
+export const forgotPassword = async (email) => {
+  try {
+    const res = await fetch("http://localhost:5500/api/v1/auth/forgot-password", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Không thể kết nối tới server");
+  }
+};
+
+export const changePassword = async (oldPassword, newPassword) => {
+  try {
+    const token = localStorage.getItem("token"); // nếu backend yêu cầu token
+    const res = await fetch("http://localhost:5500/api/v1/users/change-password", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // nếu API cần xác thực
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+
+    const data = await res.json();
+    return { ok: res.ok, data };
+  } catch (error) {
+    console.error(error);
+    throw new Error("Không thể kết nối tới server");
   }
 };

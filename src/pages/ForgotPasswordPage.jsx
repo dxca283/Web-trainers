@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { forgotPassword } from "../services/authApi.js";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
@@ -10,15 +11,17 @@ const ForgotPasswordPage = () => {
     e.preventDefault();
     setMessage("");
 
-    const res = await fetch("http://localhost:5500/api/v1/auth/forgot-password", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
-    });
+    try {
+      const { ok, data } = await forgotPassword(email);
 
-    const data = await res.json();
-    setMessage(data.message);
-    navigate("/check-email");
+      setMessage(data.message);
+
+      if (ok) {
+        navigate("/check-email");
+      }
+    } catch (err) {
+      setMessage(err.message);
+    }
   };
 
   return (
