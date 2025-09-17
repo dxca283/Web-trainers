@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import ImageGallery from "../components/ImageGallery";
 import { getProductById } from "../services/prodApi.js";
+import Button from "../components/Button.jsx";
+import { addToCart } from "../services/cartApi.js";
 
 const ProductDetailPage = () => {
   const { product_id } = useParams();
@@ -9,6 +11,7 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -28,6 +31,29 @@ const ProductDetailPage = () => {
     };
     fetchProduct();
   }, [product_id]);
+
+  const handleAddToCart = async () => {
+    if (!selectedSize) {
+      alert("Vui lòng chọn size!");
+      return;
+    }
+
+    try {
+      setAdding(true);
+      const res = await addToCart({
+        product_id: product.id,
+        size_id: selectedSize,
+        quantity,
+      });
+      alert(res.message); // hoặc toast
+      console.log("Cart item:", res.cartItem);
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setAdding(false);
+    }
+  };
+
 
   if (loading) return <p>Đang tải...</p>;
   if (!product) return <p>Không tìm thấy sản phẩm</p>;
@@ -83,9 +109,9 @@ const ProductDetailPage = () => {
           />
         </div>
 
-        <button className="bg-blue-600 text-white px-4 py-2 rounded-lg">
-          Thêm vào giỏ hàng
-        </button>
+         <Button onClick={handleAddToCart} disabled={adding}>
+          {adding ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+        </Button>
       </div>
     </div>
   );

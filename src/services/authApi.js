@@ -8,7 +8,6 @@ export const loginApi = async (username, password) => {
 
       },
       body: JSON.stringify({ username, password }),
-      credentials: "include",
     });
 
     const data = await res.json();

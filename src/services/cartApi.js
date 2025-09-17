@@ -50,3 +50,23 @@ export const deleteCartItem = async (itemId) => {
   return res.json(); 
 };
 
+// Thêm vào giỏ hàng 
+export const addToCart = async ({ product_id, size_id, quantity }) => {
+  const token = localStorage.getItem("token"); // hoặc lấy từ context
+
+  const res = await fetch(`${API_URL}/cart`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`, // nếu bạn dùng JWT
+    },
+    body: JSON.stringify({ product_id, size_id, quantity }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.message || "Không thể thêm vào giỏ hàng");
+  }
+
+  return res.json();
+};

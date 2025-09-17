@@ -13,6 +13,9 @@ const CategoryPage = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setProducts([]);
+    setLoading(true);
+
     const fetchCategoryAndProducts = async () => {
       try {
         const catData = await getCategoryById(category_id);

@@ -2,6 +2,8 @@ import { loginApi } from "../services/authApi.js";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth.js";
+import Button from "../components/Button.jsx";
+
 const LoginPage = () => {
   const [form, setForm] = useState({
     username: "",
@@ -18,6 +20,7 @@ const LoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+
     try {
       const user = await loginApi(form.username, form.password);
       login(user);
@@ -63,9 +66,7 @@ const LoginPage = () => {
             />
           </div>
           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-          <button type="submit" className="auth-btn">
-            Đăng nhập
-          </button>
+          <Button type="submit">Đăng nhập</Button>
         </form>
         <div className="auth-links">
           <Link to="/sign-up" className="auth-link">

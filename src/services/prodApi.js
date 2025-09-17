@@ -36,10 +36,17 @@ export const getProductById = async (id) => {
 export const getProductsByCategory = async (category_id) => {
   try {
     const res = await fetch(`${API_URL}/category/${category_id}`);
-    if (!res.ok) throw new Error("Failed to fetch products by category");
-    return await res.json();
+    if (!res.ok) {
+      if (res.status === 404) {
+        return [];
+      }
+      throw new Error("Failed to fetch products by category");
+    }
+    const data = await res.json();
+    return data; 
   } catch (err) {
     console.error(`Error fetching products by category ${category_id}:`, err);
     throw err;
   }
 };
+
