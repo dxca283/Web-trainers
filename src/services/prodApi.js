@@ -50,3 +50,29 @@ export const getProductsByCategory = async (category_id) => {
   }
 };
 
+// Tìm kiếm sản phẩm với các tham số
+export const searchProducts = async ({ query, minPrice, maxPrice, category, size }) => {
+  const params = new URLSearchParams();
+  if (query) params.append("q", query);
+  if (minPrice) params.append("minPrice", minPrice);
+  if (maxPrice) params.append("maxPrice", maxPrice);
+  if (category) params.append("category", category);
+  if (size) params.append("size", size);
+
+  const res = await fetch(`${API_URL}/search?${params.toString()}`);
+  if (!res.ok) throw new Error("Failed to fetch products");
+
+  return res.json();
+};
+
+// Lấy danh sách nhãn size
+export const getSizeLabels = async () => {
+  try {
+    const res = await fetch(`${API_URL}/sizes/sizes-label`);
+    if (!res.ok) throw new Error("Failed to fetch size labels");
+    return await res.json(); 
+  } catch (err) {
+    console.error("Error fetching size labels:", err);
+    throw err;
+  }
+};

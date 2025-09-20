@@ -1,20 +1,29 @@
 import { FaSearch, FaHeart, FaShoppingBag } from "react-icons/fa";
 import CategoriesMenu from "../components/CategoriesMenu";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
-import  CartContext  from "../context/CartContext"; 
-import  AuthContext  from "../context/AuthContext";
+import { useContext, useState } from "react";
+import CartContext from "../context/CartContext";
+import AuthContext from "../context/AuthContext";
 import UserMenu from "../components/UserMenu";
-
+import SearchBar from "../components/SearchBar";
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
-  
+  const handleSearch = (results) => {
+    setSearchResults(results);
+  };
+
+  const handleSubmitSearch = (query) => {
+    navigate(`/search?q=${query}`);
+    setSearchResults([]); // clear dropdown khi điều hướng
+  };
+
   return (
     <header className="w-full">
       {/* Top bar */}
@@ -28,7 +37,7 @@ const Navbar = () => {
           />
         </Link>
 
-        {/* Right links: Đăng nhập, Đăng ký, Giỏ hàng */}
+        {/* Right links */}
         <div className="flex space-x-4 items-center">
           {user ? (
             <>
@@ -90,21 +99,42 @@ const Navbar = () => {
           {/* Navigation / Categories */}
           <CategoriesMenu />
 
-          {/* Icons + Search */}
-          <div className="flex items-center space-x-4">
-            {/* Search input */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Tìm kiếm..."
-                className="pl-8 pr-3 py-1 rounded-md text-white-700"
-              />
-              <FaSearch className="absolute left-2 top-1/2 transform -translate-y-1/2 text-white-500" />
-            </div>
+          {/* Search + Icons */}
+          <div className="flex items-center space-x-4 relative">
+            <SearchBar
+              onSearch={handleSearch}
+              onSubmitSearch={handleSubmitSearch}
+            />
+
+            {/* Dropdown search suggestion */}
+            {searchResults.length > 0 && (
+              <div className="absolute top-10 left-0 bg-gray-800 text-gray-300 shadow-lg mt-2 w-72 max-h-72 overflow-y-auto z-50 rounded-md">
+                {searchResults.map((p) => (
+                  <Link
+                    key={p.id}
+                    to={`/ProductDetail/${p.id}`}
+                    className="flex items-center px-3 py-2 hover:bg-gray-700 rounded"
+                    onClick={() => setSearchResults([])}
+                  >
+                    {p.thumbnail && (
+                      <img
+                        src={p.thumbnail}
+                        alt={p.name}
+                        className="w-8 h-8 mr-2 object-cover rounded"
+                      />
+                    )}
+                    <span>{p.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
 
             {/* Icons */}
             <FaHeart className="text-xl hover:text-white cursor-pointer" />
-            <FaShoppingBag className="text-xl hover:text-white cursor-pointer" onClick={() => navigate("/order-history")} />
+            <FaShoppingBag
+              className="text-xl hover:text-white cursor-pointer"
+              onClick={() => navigate("/order-history")}
+            />
           </div>
         </div>
       </div>
