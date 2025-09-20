@@ -1,8 +1,34 @@
 import { useCart } from "../hooks/useCart.js";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 const CartPage = () => {
-  const { cart, loading, updateQuantity, removeItem, total } = useCart();
+  const {
+    cart,
+    loading,
+    updateQuantity,
+    removeItem,
+    total,
+    checkout,
+    loadingCheckout,
+  } = useCart();
+  const [checkoutError, setCheckoutError] = useState("");
+
+  const navigate = useNavigate();
 
   if (loading) return <p>Đang tải giỏ hàng...</p>;
+
+  const handleCheckoutClick = async () => {
+    try {
+      setCheckoutError("");
+      const res = await checkout(); // gọi CartContext.checkout()
+      // Nếu checkout thành công, chuyển hướng
+      navigate("/confirm-order", { state: { order: res.order } });
+    } catch (err) {
+      console.error(err);
+      setCheckoutError(err.message || "Thanh toán thất bại");
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
@@ -14,7 +40,10 @@ const CartPage = () => {
         <>
           <div className="space-y-6">
             {cart.map((item) => (
-              <div key={item.id} className="flex items-center bg-gray-800 p-4 rounded-lg">
+              <div
+                key={item.id}
+                className="flex items-center bg-gray-800 p-4 rounded-lg"
+              >
                 <img
                   src={item.image}
                   alt={item.name}
@@ -22,7 +51,9 @@ const CartPage = () => {
                 />
                 <div className="ml-4 flex-1">
                   <h3 className="text-white">{item.name}</h3>
-                  <p className="text-gray-400">Size: {item.size_label || "N/A"}</p>
+                  <p className="text-gray-400">
+                    Size: {item.size_label || "N/A"}
+                  </p>
                   <p className="text-yellow-400 font-bold">
                     {item.price.toLocaleString("vi-VN")} ₫
                   </p>
@@ -54,12 +85,18 @@ const CartPage = () => {
             ))}
           </div>
 
+          {checkoutError && <p className="text-red-500 mt-4">{checkoutError}</p>}
+
           <div className="mt-10 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">
               Tổng: {total.toLocaleString("vi-VN")} ₫
             </h2>
-            <button className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
-              Thanh toán
+            <button
+              onClick={handleCheckoutClick}
+              disabled={loadingCheckout || cart.length === 0}
+              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+            >
+              {loadingCheckout ? "Đang xử lý..." : "Xác nhận đơn hàng"}
             </button>
           </div>
         </>

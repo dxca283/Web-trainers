@@ -11,6 +11,12 @@ import ForgotPasswordPage from "../pages/ForgotPasswordPage";
 import ResetPasswordPage from "../pages/ResetPasswordPage";
 import CheckEmailPage from "../pages/CheckEmailPage";
 import ChangePasswordPage from "../pages/ChangePasswordPage";
+import OrderPage from "../pages/OrderPage";
+import PaymentSuccessPage from "../pages/PaymentSuccessPage";
+import PaymentCancelPage from "../pages/PaymentCancelPage";
+import ConfirmOrderPage from "../pages/ConfirmOrderPage";
+import OrderHistoryPage from "../pages/OrderHistoryPage";
+import ProfilePage from "../pages/ProfilePage";
 
 export const routes = [
   {
@@ -29,8 +35,25 @@ export const routes = [
           </ProtectedRoute>
         ),
       },
+      {
+        path: "confirm-order",
+        element: (
+          <ProtectedRoute>
+            <OrderPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "order-history",
+        element: (
+          <ProtectedRoute>
+            <OrderHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
       { path: "sign-in", element: <LoginPage /> },
       { path: "sign-up", element: <RegisterPage /> },
+      { path: "edit-profile", element: <ProfilePage /> },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password", element: <ResetPasswordPage /> },
       { path: "check-email", element: <CheckEmailPage /> },
@@ -39,6 +62,22 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <ChangePasswordPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "payment/success",
+        element: <PaymentSuccessPage />,
+      },
+      {
+        path: "payment/cancel",
+        element: <PaymentCancelPage />,
+      },
+      {
+        path: "order/confirm-order",
+        element: (
+          <ProtectedRoute>
+            <ConfirmOrderPage />
           </ProtectedRoute>
         ),
       },

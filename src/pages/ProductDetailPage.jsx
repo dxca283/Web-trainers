@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import ImageGallery from "../components/ImageGallery";
 import { getProductById } from "../services/prodApi.js";
 import Button from "../components/Button.jsx";
-import { addToCart } from "../services/cartApi.js";
+import CartContext from "../context/CartContext.jsx";
+import { toast } from "react-toastify";
 
 const ProductDetailPage = () => {
   const { product_id } = useParams();
@@ -12,6 +13,9 @@ const ProductDetailPage = () => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
+
+
+  const { addItem } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -34,21 +38,21 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     if (!selectedSize) {
-      alert("Vui lòng chọn size!");
+      toast("Vui lòng chọn size!");
       return;
     }
 
     try {
       setAdding(true);
-      const res = await addToCart({
+      const res = await addItem({
         product_id: product.id,
         size_id: selectedSize,
         quantity,
       });
-      alert(res.message); // hoặc toast
+      toast.success(res.message);
       console.log("Cart item:", res.cartItem);
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setAdding(false);
     }

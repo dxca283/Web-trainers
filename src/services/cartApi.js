@@ -1,72 +1,48 @@
-// cartService.js
+import { handleResponse } from "./apiHelper.js";
+
 const API_URL = "http://localhost:5500/api/v1/cart";
 
-// Lấy token từ localStorage (hoặc context)
-const getToken = () => localStorage.getItem("token");
 
 // Lấy giỏ hàng
-export const getCart = async () => {
-  const token = getToken();
+export const getCart = async (token) => {
   const res = await fetch(API_URL, {
     method: "GET",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch cart");
-  }
-
-  return res.json();
+  return handleResponse(res);
 };
 
 // Cập nhật số lượng
-export const updateCartItem = async (itemId, data) => {
-  const token = getToken();
+export const updateCartItem = async (token, itemId, data) => {
   const res = await fetch(`${API_URL}/${itemId}`, {
     method: "PUT",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, 
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error("Failed to update cart item");
-  return res.json(); 
+  return handleResponse(res);
 };
-
 
 // Xóa item
-export const deleteCartItem = async (itemId) => {
-  const token = localStorage.getItem("token");
+export const deleteCartItem = async (token, itemId) => {
   const res = await fetch(`${API_URL}/${itemId}`, {
     method: "DELETE",
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { Authorization: `Bearer ${token}` },
   });
-  if (!res.ok) throw new Error("Failed to delete cart item");
-  return res.json(); 
+  return handleResponse(res);
 };
 
-// Thêm vào giỏ hàng 
-export const addToCart = async ({ product_id, size_id, quantity }) => {
-  const token = localStorage.getItem("token"); // hoặc lấy từ context
-
-  const res = await fetch(`${API_URL}/cart`, {
+// Thêm vào giỏ hàng
+export const addToCart = async (token, { product_id, size_id, quantity }) => {
+  const res = await fetch(`${API_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`, // nếu bạn dùng JWT
+      Authorization: `Bearer ${token}`,
     },
     body: JSON.stringify({ product_id, size_id, quantity }),
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Không thể thêm vào giỏ hàng");
-  }
-
-  return res.json();
+  return handleResponse(res);
 };

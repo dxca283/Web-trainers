@@ -4,18 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import  CartContext  from "../context/CartContext"; 
 import  AuthContext  from "../context/AuthContext";
+import UserMenu from "../components/UserMenu";
+
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
-  const {user, logout} = useContext(AuthContext);
+  const {user} = useContext(AuthContext);
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logout();
-    navigate("/sign-in");
-  };
+  
   return (
     <header className="w-full">
       {/* Top bar */}
@@ -33,25 +32,13 @@ const Navbar = () => {
         <div className="flex space-x-4 items-center">
           {user ? (
             <>
-              <span className="text-white">Xin chào, {user.username}</span>
-              <button
-                onClick={handleLogout}
-                className="hover:text-white text-red-400"
-              >
-                Đăng xuất
-              </button>
-              <Link
-                to="/change-password"
-                className="hover:text-white"
-              >
-                Đổi mật khẩu
-              </Link>
+              <UserMenu />
               <Link
                 to="/cart"
                 className="relative flex items-center hover:text-white"
               >
                 <span className="absolute -top-2 bg-red-600 text-white text-xs w-5 h-4 flex items-center justify-center rounded-full">
-                  ${cartCount}
+                  {cartCount}
                 </span>
                 <img
                   src="/cart-icon.png"
@@ -117,7 +104,7 @@ const Navbar = () => {
 
             {/* Icons */}
             <FaHeart className="text-xl hover:text-white cursor-pointer" />
-            <FaShoppingBag className="text-xl hover:text-white cursor-pointer" />
+            <FaShoppingBag className="text-xl hover:text-white cursor-pointer" onClick={() => navigate("/order-history")} />
           </div>
         </div>
       </div>
