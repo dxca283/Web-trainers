@@ -53,7 +53,12 @@ export const routes = [
       },
       { path: "sign-in", element: <LoginPage /> },
       { path: "sign-up", element: <RegisterPage /> },
-      { path: "edit-profile", element: <ProfilePage /> },
+      { path: "edit-profile", element: (
+        <ProtectedRoute>
+          <ProfilePage />
+        </ProtectedRoute>
+      )
+    },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password", element: <ResetPasswordPage /> },
       { path: "check-email", element: <CheckEmailPage /> },

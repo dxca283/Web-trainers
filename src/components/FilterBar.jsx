@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getCategories } from "../services/categoryApi.js";
 import { getSizeLabels } from "../services/prodApi.js";
 import Button from "./Button.jsx";
+import SearchBar from "./SearchBar.jsx";
 
 const FilterBar = ({
   query,
@@ -41,14 +42,8 @@ const FilterBar = ({
   }, []);
 
   return (
-    <div className="mb-6 flex flex-wrap gap-4">
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Tìm kiếm sản phẩm..."
-        className="px-3 py-2 rounded-md text-gray-200 placeholder-light-200 bg-dark-100 border border-gray-600"
-      />
+    <div className="mb-6 flex flex-wrap gap-4 items-center">
+      <SearchBar query={query} setQuery={setQuery} />
 
       <select
         value={category}
@@ -78,6 +73,7 @@ const FilterBar = ({
         placeholder="Giá đến"
         className="px-3 py-2 rounded-md w-24 text-gray-200 bg-dark-100 border border-gray-600"
       />
+
       <select
         value={size}
         onChange={(e) => setSize(e.target.value)}
@@ -90,6 +86,7 @@ const FilterBar = ({
           </option>
         ))}
       </select>
+
       <Button
         type="button"
         onClick={onReset}

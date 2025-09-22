@@ -10,7 +10,7 @@ const MainLayout = () => {
       <main className="flex-1">
         <Outlet /> {/* hoặc Routes / nội dung */}
       </main>
-
+      
       <Footer />
     </div>
   );

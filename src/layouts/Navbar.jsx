@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import CartContext from "../context/CartContext";
 import AuthContext from "../context/AuthContext";
 import UserMenu from "../components/UserMenu";
-import SearchBar from "../components/SearchBar";
+import SearchBarNav from "../components/SearchBarNav";
 
 const Navbar = () => {
   const { cart } = useContext(CartContext);
@@ -101,7 +101,7 @@ const Navbar = () => {
 
           {/* Search + Icons */}
           <div className="flex items-center space-x-4 relative">
-            <SearchBar
+            <SearchBarNav
               onSearch={handleSearch}
               onSubmitSearch={handleSubmitSearch}
             />

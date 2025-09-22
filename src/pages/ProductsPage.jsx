@@ -3,9 +3,13 @@ import ProductCard from "../components/ProductCard";
 import { getProducts, searchProducts } from "../services/prodApi.js";
 import FilterBar from "../components/FilterBar.jsx";
 import { useDebounce } from "react-use";
+import { updateSearchCount } from "../services/appwrite.js";
+import HotProducts from "../components/HotProducts.jsx";
+import useHotProducts from "../hooks/useHotProducts.js";
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
+  const [hotProducts] = useHotProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,20 +19,6 @@ const ProductsPage = () => {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [size, setSize] = useState("");
-
-  useEffect(() => {
-    const fetchProds = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data || []);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProds();
-  }, []);
 
   // Filter/search products với debounce
   useDebounce(
@@ -46,7 +36,15 @@ const ProductsPage = () => {
             maxPrice,
             size,
           });
-          setFilteredProducts(res.results || []);
+          const results = res.results || [];
+          setFilteredProducts(results);
+
+          // Cập nhật số lượng tìm kiếm trong Appwrite
+          results.forEach((product) => {
+            updateSearchCount(query, product).catch((err) =>
+              console.error("Appwrite updateSearchCount error:", err)
+            );
+          });
         } catch (err) {
           console.error(err);
         }
@@ -56,6 +54,20 @@ const ProductsPage = () => {
     600,
     [query, category, minPrice, maxPrice, size]
   );
+
+  useEffect(() => {
+    const fetchProds = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data || []);
+      } catch (error) {
+        console.error("Error fetching products", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProds();
+  }, []);
 
   if (loading) {
     return (
@@ -85,7 +97,13 @@ const ProductsPage = () => {
     setFilteredProducts([]);
   };
   return (
+
+    
+
     <div className="max-w-6xl mx-auto px-6 py-10">
+      <h1 className="text-3xl text-gradient font-bold mb-8" >Sản phẩm tìm kiếm nhiều nhất</h1>
+      <HotProducts hotProducts={hotProducts} allProducts={products}  />
+
       <h1 className="text-3xl text-gradient font-bold mb-8">Tất cả sản phẩm</h1>
 
       {/* Filter/Search bar */}
