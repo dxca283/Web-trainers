@@ -21,7 +21,7 @@ const HotProducts = ({ hotProducts, allProducts }) => {
   }, []);
 
   const handleClick = (prodId) => {
-    navigate(`/products/${prodId}`); // Điều hướng tới trang chi tiết sản phẩm
+    navigate(`/ProductDetail/${prodId}`); // Điều hướng tới trang chi tiết sản phẩm
   };
 
   return (
