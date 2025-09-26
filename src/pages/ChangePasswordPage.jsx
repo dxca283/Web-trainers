@@ -1,26 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { changePassword } from "../services/authApi.js";
 import { useAuth } from "../hooks/useAuth.js";
 import Button from "../components/Button.jsx";
-import Spinner from "../components/Spinner.jsx";
 
 const ChangePasswordPage = () => {
-  const { token } = useAuth();
+  const { token, logout } = useAuth();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
-  // Nếu chưa đăng nhập, redirect
-  useEffect(() => {
-    if (!token) {
-      toast.error("Bạn chưa đăng nhập");
-      navigate("/sign-in");
-    }
-  }, [token, navigate]);
+  
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -31,10 +25,15 @@ const ChangePasswordPage = () => {
 
     try {
       setSubmitting(true);
-      const { ok, data } = await changePassword(token, oldPassword, newPassword);
+      const { ok, data } = await changePassword(
+        token,
+        oldPassword,
+        newPassword
+      );
 
       if (ok) {
         toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
+         logout();
         setTimeout(() => navigate("/sign-in"), 2000);
       } else {
         toast.error(data.message || "Đổi mật khẩu thất bại");
@@ -76,7 +75,7 @@ const ChangePasswordPage = () => {
             required
           />
           <Button type="submit" loading={submitting}>
-            {submitting ? <Spinner size="sm" /> : "Xác nhận"}
+            Xác nhận
           </Button>
         </form>
       </div>
