@@ -23,7 +23,7 @@ const HotProducts = ({ hotProducts, allProducts }) => {
   const handleClick = (prodId) => {
     navigate(`/ProductDetail/${prodId}`); // Điều hướng tới trang chi tiết sản phẩm
   };
-
+  
   return (
     <section className="trending">
       <ul ref={ulRef} className="flex gap-5 overflow-x-auto hide-scrollbar">
