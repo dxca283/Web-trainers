@@ -1,6 +1,8 @@
 import { useCart } from "../hooks/useCart.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner.jsx";
+import Button from "../components/Button.jsx";
 
 const CartPage = () => {
   const {
@@ -12,17 +14,22 @@ const CartPage = () => {
     checkout,
     loadingCheckout,
   } = useCart();
-  const [checkoutError, setCheckoutError] = useState("");
 
+  const [checkoutError, setCheckoutError] = useState("");
   const navigate = useNavigate();
 
-  if (loading) return <p>Đang tải giỏ hàng...</p>;
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner />
+      </div>
+    );
+  }
 
   const handleCheckoutClick = async () => {
     try {
       setCheckoutError("");
-      const res = await checkout(); // gọi CartContext.checkout()
-      // Nếu checkout thành công, chuyển hướng
+      const res = await checkout();
       navigate("/confirm-order", { state: { order: res.order } });
     } catch (err) {
       console.error(err);
@@ -35,7 +42,9 @@ const CartPage = () => {
       <h1 className="text-3xl font-bold mb-8">Giỏ hàng</h1>
 
       {cart.length === 0 ? (
-        <p>Giỏ hàng trống.</p>
+        <div className="text-center py-20 text-gray-300">
+          <p>Giỏ hàng trống.</p>
+        </div>
       ) : (
         <>
           <div className="space-y-6">
@@ -85,19 +94,22 @@ const CartPage = () => {
             ))}
           </div>
 
-          {checkoutError && <p className="text-red-500 mt-4">{checkoutError}</p>}
+          {checkoutError && (
+            <p className="text-red-500 mt-4">{checkoutError}</p>
+          )}
 
           <div className="mt-10 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">
               Tổng: {total.toLocaleString("vi-VN")} ₫
             </h2>
-            <button
+            <Button
               onClick={handleCheckoutClick}
               disabled={loadingCheckout || cart.length === 0}
-              className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50"
+              className="px-6 py-3 w-48 flex justify-center items-center"
+              loading={loadingCheckout}
             >
-              {loadingCheckout ? "Đang xử lý..." : "Xác nhận đơn hàng"}
-            </button>
+              Xác nhận đơn hàng
+            </Button>
           </div>
         </>
       )}

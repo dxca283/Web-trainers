@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import { getProductsByCategory } from "../services/prodApi.js";
 import { getCategoryById } from "../services/categoryApi.js";
+import Spinner from "../components/Spinner.jsx";
 
 
 
@@ -33,7 +34,8 @@ const CategoryPage = () => {
     fetchCategoryAndProducts();
   }, [category_id]);
 
-  if (loading) return <p>Đang tải...</p>;
+  if (loading) return <Spinner loading={loading} />;
+
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">

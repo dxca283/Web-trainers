@@ -1,26 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { forgotPassword } from "../services/authApi.js";
+import Button from "../components/Button.jsx";
+import Spinner from "../components/Spinner.jsx";
+import { toast } from "react-toastify";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage("");
+    setSubmitting(true);
 
     try {
       const { ok, data } = await forgotPassword(email);
 
-      setMessage(data.message);
-
       if (ok) {
+        toast.success(data.message || "Link đặt lại mật khẩu đã được gửi!");
         navigate("/check-email");
+      } else {
+        toast.error(data.message || "Có lỗi xảy ra");
       }
     } catch (err) {
-      setMessage(err.message);
+      toast.error(err.message || "Có lỗi xảy ra");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -37,9 +43,10 @@ const ForgotPasswordPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <button type="submit" className="auth-btn">Gửi link đặt lại mật khẩu</button>
+          <Button type="submit" loading={submitting}>
+            {submitting ? <Spinner size="sm" /> : "Gửi link đặt lại mật khẩu"}
+          </Button>
         </form>
-        {message && <p>{message}</p>}
       </div>
     </div>
   );

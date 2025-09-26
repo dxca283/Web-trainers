@@ -1,24 +1,46 @@
-const API_URL = "http://localhost:5500/api/v1/users";
+import API_URL from "../../config/config.js";
 
 export const getUserProfile = async (token) => {
-  const res = await fetch(`${API_URL}/me`, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  if (!res.ok) throw new Error("Không lấy được profile");
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/v1/users/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Không lấy được profile");
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message || "Không kết nối được tới server");
+  }
 };
 
 export const updateUserProfile = async (token, userData) => {
-  const res = await fetch(`${API_URL}/me`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify(userData),
-  });
-  if (!res.ok) throw new Error("Không cập nhật được profile");
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/v1/users/me`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(userData),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Không cập nhật được profile");
+    }
+
+    return data;
+  } catch (error) {
+    console.error(error);
+    throw new Error(error.message || "Không kết nối được tới server");
+  }
 };

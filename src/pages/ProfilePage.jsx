@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth";
 import { getUserProfile, updateUserProfile } from "../services/userApi";
+import Spinner from "../components/Spinner";
+import Button from "../components/Button";
 
 const ProfilePage = () => {
   const { token } = useAuth();
-
 
   const [form, setForm] = useState({
     full_name: "",
@@ -15,12 +16,14 @@ const ProfilePage = () => {
     address: "",
   });
 
-  const [initialForm, setInitialForm] = useState(null); // lưu dữ liệu ban đầu
+  const [initialForm, setInitialForm] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  // Load user profile từ API
   useEffect(() => {
     const fetchProfile = async () => {
       try {
+        setLoading(true);
         const data = await getUserProfile(token);
         const userData = {
           full_name: data.full_name || "",
@@ -33,10 +36,11 @@ const ProfilePage = () => {
         setInitialForm(userData);
       } catch {
         toast.error("Không tải được thông tin người dùng");
+      } finally {
+        setLoading(false);
       }
     };
     fetchProfile();
-    console.log("Token ở frontend:", token);
   }, [token]);
 
   const handleChange = (e) => {
@@ -46,89 +50,58 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setSubmitting(true);
       await updateUserProfile(token, form);
       toast.success("Cập nhật thông tin thành công");
-
-      // set lại bản gốc = bản vừa lưu
       setInitialForm(form);
     } catch {
       toast.error("Cập nhật thất bại");
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  // Check nếu chưa thay đổi gì
   const isUnchanged =
     initialForm && JSON.stringify(form) === JSON.stringify(initialForm);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner />
+      </div>
+    );
+  }
+
+  const fields = [
+    { id: "full_name", label: "Họ và tên", type: "text" },
+    { id: "username", label: "Username", type: "text", disabled: true },
+    { id: "email", label: "Email", type: "email" },
+    { id: "phone", label: "Số điện thoại", type: "tel" },
+    { id: "address", label: "Địa chỉ", type: "text" },
+  ];
 
   return (
     <div className="auth-bg">
       <div className="auth-card">
         <h2 className="auth-title">Thông tin cá nhân</h2>
         <form className="auth-form" onSubmit={handleSubmit}>
-          <div>
-            <label className="auth-label">Họ và tên</label>
-            <input
-              type="text"
-              id="full_name"
-              className="auth-input"
-              value={form.full_name}
-              onChange={handleChange}
-            />
-          </div>
+          {fields.map(({ id, label, type, disabled }) => (
+            <div key={id}>
+              <label className="auth-label">{label}</label>
+              <input
+                type={type}
+                id={id}
+                className="auth-input"
+                value={form[id]}
+                onChange={handleChange}
+                disabled={disabled}
+              />
+            </div>
+          ))}
 
-          <div>
-            <label className="auth-label">Username</label>
-            <input
-              type="text"
-              id="username"
-              className="auth-input"
-              value={form.username}
-              disabled
-            />
-          </div>
-
-          <div>
-            <label className="auth-label">Email</label>
-            <input
-              type="email"
-              id="email"
-              className="auth-input"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="auth-label">Số điện thoại</label>
-            <input
-              type="tel"
-              id="phone"
-              className="auth-input"
-              value={form.phone}
-              onChange={handleChange}
-            />
-          </div>
-
-          <div>
-            <label className="auth-label">Địa chỉ</label>
-            <input
-              type="text"
-              id="address"
-              className="auth-input"
-              value={form.address}
-              onChange={handleChange}
-            />
-          </div>
-
-          <button
-            type="submit"
-            className={`auth-btn ${
-              isUnchanged ? "bg-gray-400 cursor-not-allowed" : ""
-            }`}
-            disabled={isUnchanged}
-          >
+          <Button type="submit" loading={submitting} disabled={isUnchanged || submitting}>
             Lưu thay đổi
-          </button>
+          </Button>
         </form>
       </div>
     </div>

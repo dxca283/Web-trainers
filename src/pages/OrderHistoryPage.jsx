@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useAuth } from "../hooks/useAuth.js";
-import { getOrders } from "../services/orderApi.js";
-import { createPaypalOrder } from "../services/paymentApi.js"; // thêm cancelOrder
 import { toast } from "react-toastify";
-import { cancelOrder } from "../services/orderApi.js";
+import { useAuth } from "../hooks/useAuth.js";
+import { getOrders, cancelOrder } from "../services/orderApi.js";
+import { createPaypalOrder } from "../services/paymentApi.js";
+import Spinner from "../components/Spinner.jsx";
+import Button from "../components/Button.jsx";
 
 const OrderHistoryPage = () => {
   const { token } = useAuth();
@@ -11,6 +12,8 @@ const OrderHistoryPage = () => {
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("paid");
   const [selectedOrder, setSelectedOrder] = useState(null);
+  const [paying, setPaying] = useState(false);
+  const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -34,32 +37,37 @@ const OrderHistoryPage = () => {
 
   const handlePay = async () => {
     if (!selectedOrder) {
-      alert("Vui lòng chọn một đơn hàng để thanh toán.");
+      toast.error("Vui lòng chọn một đơn hàng để thanh toán.");
       return;
     }
-
     try {
+      setPaying(true);
       const data = await createPaypalOrder(token, selectedOrder);
       if (data.approve_url) {
         window.location.href = data.approve_url;
       } else {
-        alert("Không tìm thấy link thanh toán PayPal.");
+        toast.error("Không tìm thấy link thanh toán PayPal.");
       }
     } catch (err) {
       console.error(err);
-      alert(err.message);
+      toast.error(err.message);
+    } finally {
+      setPaying(false);
     }
   };
 
   const handleCancelOrder = async (orderId) => {
     try {
+      setCancellingId(orderId);
       await cancelOrder(token, orderId);
       toast.success("Hủy đơn hàng thành công");
-      setOrders((prev) => prev.filter((o) => o.id !== orderId)); // update UI
+      setOrders((prev) => prev.filter((o) => o.id !== orderId));
       if (selectedOrder === orderId) setSelectedOrder(null);
     } catch (error) {
       console.error("Cancel order error:", error);
       toast.error("Có lỗi xảy ra khi hủy đơn hàng");
+    } finally {
+      setCancellingId(null);
     }
   };
 
@@ -69,28 +77,32 @@ const OrderHistoryPage = () => {
 
       {/* Toggle */}
       <div className="flex gap-4 mb-6">
-        <button
+        <Button
           onClick={() => {
             setStatus("pending");
             setSelectedOrder(null);
           }}
-          className={`px-4 py-2 rounded ${status === "pending" ? "bg-blue-500" : "bg-gray-700"}`}
+          className={status === "pending" ? "bg-blue-500" : "bg-gray-700"}
         >
           Đang chờ thanh toán
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => {
             setStatus("paid");
             setSelectedOrder(null);
           }}
-          className={`px-4 py-2 rounded ${status === "paid" ? "bg-blue-500" : "bg-gray-700"}`}
+          className={status === "paid" ? "bg-blue-500" : "bg-gray-700"}
         >
           Đã thanh toán
-        </button>
+        </Button>
       </div>
 
       {/* Loading */}
-      {loading && <div className="text-center py-10">Đang tải đơn hàng...</div>}
+      {loading && (
+        <div className="text-center py-10">
+          <Spinner />
+        </div>
+      )}
 
       {/* Empty */}
       {!loading && orders.length === 0 && (
@@ -108,7 +120,10 @@ const OrderHistoryPage = () => {
         <>
           <div className="space-y-4">
             {orders.map((order) => (
-              <div key={order.id} className="bg-gray-800 rounded-lg p-4 flex justify-between">
+              <div
+                key={order.id}
+                className="bg-gray-800 rounded-lg p-4 flex justify-between"
+              >
                 <div className="flex items-start">
                   {status === "pending" && (
                     <input
@@ -119,10 +134,19 @@ const OrderHistoryPage = () => {
                     />
                   )}
                   <div>
-                    <p><span className="font-semibold">Mã đơn hàng:</span> {order.id}</p>
+                    <p>
+                      <span className="font-semibold">Mã đơn hàng:</span>{" "}
+                      {order.id}
+                    </p>
                     <p>
                       <span className="font-semibold">Trạng thái:</span>{" "}
-                      <span className={order.status === "paid" ? "text-green-400" : "text-yellow-400"}>
+                      <span
+                        className={
+                          order.status === "paid"
+                            ? "text-green-400"
+                            : "text-yellow-400"
+                        }
+                      >
                         {order.status}
                       </span>
                     </p>
@@ -134,7 +158,8 @@ const OrderHistoryPage = () => {
                     <ul className="ml-4 list-disc">
                       {order.order_items?.map((item) => (
                         <li key={item.id}>
-                          {item.products?.name} - Size {item.sizes?.size_label} - SL: {item.quantity}
+                          {item.products?.name} - Size {item.sizes?.size_label}{" "}
+                          - SL: {item.quantity}
                         </li>
                       ))}
                     </ul>
@@ -143,12 +168,14 @@ const OrderHistoryPage = () => {
 
                 {/* Nút Hủy chỉ hiện khi đang tab Pending */}
                 {status === "pending" && (
-                  <button
+                  <Button
                     onClick={() => handleCancelOrder(order.id)}
-                    className="bg-red-500 px-4 py-2 rounded hover:bg-red-600 self-start"
+                    className="bg-red-500 hover:bg-red-600 self-start w-36 flex justify-center items-center relative"
+                    disabled={cancellingId === order.id}
+                    loading={cancellingId}
                   >
                     Hủy đơn
-                  </button>
+                  </Button>
                 )}
               </div>
             ))}
@@ -157,12 +184,14 @@ const OrderHistoryPage = () => {
           {/* Nút thanh toán */}
           {status === "pending" && (
             <div className="mt-6 text-right">
-              <button
+              <Button
                 onClick={handlePay}
-                className="bg-green-500 px-6 py-2 rounded hover:bg-green-600"
+                className="bg-green-500 hover:bg-green-600 w-48 flex justify-center items-center relative"
+                disabled={!selectedOrder || paying}
+                loading={paying}
               >
                 Thanh toán đơn hàng
-              </button>
+              </Button>
             </div>
           )}
         </>

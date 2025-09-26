@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { getOrderById } from "../services/orderApi.js"; 
 import { useAuth } from "../hooks/useAuth.js";
+import Spinner from "../components/Spinner.jsx";
 
 const ConfirmOrderPage = () => {
   const { token } = useAuth();
@@ -15,7 +16,7 @@ const ConfirmOrderPage = () => {
     const orderId = query.get("order_id");
 
     if (!orderId) {
-      navigate("/");
+      
       return;
     }
 
@@ -25,7 +26,7 @@ const ConfirmOrderPage = () => {
         setOrder(data);
       } catch (err) {
         console.error(err);
-        navigate("/");
+       
       } finally {
         setLoading(false);
       }
@@ -35,12 +36,9 @@ const ConfirmOrderPage = () => {
   }, [location, token, navigate]);
 
   if (loading) {
-    return (
-      <div className="text-center py-10">
-        <h1 className="text-xl text-white">Đang tải thông tin đơn hàng...</h1>
-      </div>
-    );
-  }
+  return <Spinner loading={loading} />;
+}
+
 
   if (!order) {
     return (
@@ -58,7 +56,7 @@ const ConfirmOrderPage = () => {
         <p><span className="font-semibold">Mã đơn hàng:</span> {order.id}</p>
         <p><span className="font-semibold">Trạng thái:</span> {order.status}</p>
         <p><span className="font-semibold">Tổng tiền:</span> {order.total_amount} USD</p>
-
+      
         <h2 className="text-xl font-semibold mt-6 mb-3">Sản phẩm</h2>
         <ul className="space-y-2">
           {order.items?.map((item) => (

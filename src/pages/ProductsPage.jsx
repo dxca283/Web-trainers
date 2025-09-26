@@ -6,12 +6,14 @@ import { useDebounce } from "react-use";
 import { updateSearchCount } from "../services/appwrite.js";
 import HotProducts from "../components/HotProducts.jsx";
 import useHotProducts from "../hooks/useHotProducts.js";
+import Spinner from "../components/Spinner.jsx"; // import spinner component
 
 const ProductsPage = () => {
   const [products, setProducts] = useState([]);
   const [hotProducts] = useHotProducts();
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searching, setSearching] = useState(false); // spinner cho search/filter
 
   // Filter states
   const [query, setQuery] = useState("");
@@ -24,29 +26,36 @@ const ProductsPage = () => {
   useDebounce(
     () => {
       const fetchFiltered = async () => {
-        if (!query && !category && !minPrice && !maxPrice && !size) {
+        const trimmedQuery = query.trim();
+
+        if (!trimmedQuery && !category && !minPrice && !maxPrice && !size) {
           setFilteredProducts([]);
           return;
         }
+
+        setSearching(true);
         try {
           const res = await searchProducts({
-            query,
+            query: trimmedQuery,
             category,
             minPrice,
             maxPrice,
             size,
           });
+
           const results = res.results || [];
           setFilteredProducts(results);
 
-          // Cập nhật số lượng tìm kiếm trong Appwrite
+          
           results.forEach((product) => {
-            updateSearchCount(query, product).catch((err) =>
+            updateSearchCount(trimmedQuery, product).catch((err) =>
               console.error("Appwrite updateSearchCount error:", err)
             );
           });
         } catch (err) {
           console.error(err);
+        } finally {
+          setSearching(false);
         }
       };
       fetchFiltered();
@@ -69,13 +78,15 @@ const ProductsPage = () => {
     fetchProds();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <p className="text-gray-500">Đang tải sản phẩm...</p>
-      </div>
-    );
-  }
+  const resetFilters = () => {
+    setQuery("");
+    setCategory("");
+    setMinPrice("");
+    setMaxPrice("");
+    setSize("");
+    setFilteredProducts([]);
+  };
+
   const displayProducts =
     filteredProducts.length > 0 || query || minPrice || maxPrice
       ? filteredProducts
@@ -88,21 +99,20 @@ const ProductsPage = () => {
               .filter(Boolean) || [],
         }));
 
-  const resetFilters = () => {
-    setQuery("");
-    setCategory("");
-    setMinPrice("");
-    setMaxPrice("");
-    setSize("");
-    setFilteredProducts([]);
-  };
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-64">
+        <Spinner loading={true} />
+        <p className="text-gray-500 mt-2">Đang tải sản phẩm...</p>
+      </div>
+    );
+
   return (
-
-    
-
     <div className="max-w-6xl mx-auto px-6 py-10">
-      <h1 className="text-3xl text-gradient font-bold mb-8" >Sản phẩm tìm kiếm nhiều nhất</h1>
-      <HotProducts hotProducts={hotProducts} allProducts={products}  />
+      <h1 className="text-3xl text-gradient font-bold mb-8">
+        Sản phẩm tìm kiếm nhiều nhất
+      </h1>
+      <HotProducts hotProducts={hotProducts} allProducts={products} />
 
       <h1 className="text-3xl text-gradient font-bold mb-8">Tất cả sản phẩm</h1>
 
@@ -121,7 +131,12 @@ const ProductsPage = () => {
         onReset={resetFilters}
       />
 
-      {displayProducts.length === 0 ? (
+      {searching ? (
+        <div className="flex justify-center items-center h-64">
+          <Spinner loading={true} />
+          <p className="text-gray-500 mt-2">Đang tìm kiếm...</p>
+        </div>
+      ) : displayProducts.length === 0 ? (
         <p className="text-gradient">Chưa có sản phẩm nào.</p>
       ) : (
         <div className="all-products">

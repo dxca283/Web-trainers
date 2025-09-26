@@ -5,6 +5,7 @@ import { getProductById } from "../services/prodApi.js";
 import Button from "../components/Button.jsx";
 import CartContext from "../context/CartContext.jsx";
 import { toast } from "react-toastify";
+import Spinner from "../components/Spinner.jsx";
 
 const ProductDetailPage = () => {
   const { product_id } = useParams();
@@ -14,16 +15,15 @@ const ProductDetailPage = () => {
   const [quantity, setQuantity] = useState(1);
   const [adding, setAdding] = useState(false);
 
-
   const { addItem } = useContext(CartContext);
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
+        setLoading(true);
         const data = await getProductById(product_id);
         setProduct(data);
 
-        // nếu có size, chọn size đầu tiên làm mặc định
         if (data.product_sizes?.length > 0) {
           setSelectedSize(data.product_sizes[0].size_id);
         }
@@ -38,7 +38,7 @@ const ProductDetailPage = () => {
 
   const handleAddToCart = async () => {
     if (!selectedSize) {
-      toast("Vui lòng chọn size!");
+      toast.error("Vui lòng chọn size!");
       return;
     }
 
@@ -50,7 +50,6 @@ const ProductDetailPage = () => {
         quantity,
       });
       toast.success(res.message);
-      console.log("Cart item:", res.cartItem);
     } catch (err) {
       toast.error(err.message);
     } finally {
@@ -58,8 +57,15 @@ const ProductDetailPage = () => {
     }
   };
 
+  if (loading) {
+    return (
+      <div className="text-center py-20">
+        <Spinner />
+        <p>Đang tải sản phẩm...</p>
+      </div>
+    );
+  }
 
-  if (loading) return <p>Đang tải...</p>;
   if (!product) return <p>Không tìm thấy sản phẩm</p>;
 
   return (
@@ -74,7 +80,7 @@ const ProductDetailPage = () => {
         <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
         <p className="text-gray-500 mb-4">{product.description}</p>
         <p className="text-2xl text-red-500 mb-6">
-          {product.price.toLocaleString("vi-VN")} ₫
+          ${product.price.toLocaleString("vi-VN")}
         </p>
 
         {/* Chọn size nếu có */}
@@ -113,8 +119,8 @@ const ProductDetailPage = () => {
           />
         </div>
 
-         <Button onClick={handleAddToCart} disabled={adding}>
-          {adding ? "Đang thêm..." : "Thêm vào giỏ hàng"}
+        <Button onClick={handleAddToCart} loading={adding}>
+          Thêm vào giỏ hàng
         </Button>
       </div>
     </div>

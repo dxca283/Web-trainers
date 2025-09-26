@@ -3,6 +3,7 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getCategories } from "../services/categoryApi";
+import Spinner from "../components/Spinner";
 
 const HomePage = () => {
   const [categories, setCategories] = useState([]);
@@ -22,7 +23,8 @@ const HomePage = () => {
 
     fetchCategories();
   }, []);
-  if (loading) return <p className="text-center py-6">Đang tải...</p>;
+  if (loading) return <Spinner loading={loading} />;
+
   return (
     <div className="w-full max-w-6xl mx-auto flex-1 py-6 relative">
       <div className="absolute inset-0 -z-10 bg-gradient-to-r " />

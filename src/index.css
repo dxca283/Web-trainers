@@ -45,25 +45,27 @@
     @apply mt-20;
 
     & ul {
-      @apply flex flex-row overflow-x-auto scroll-p-2 gap-5 -mt-5 w-full hide-scrollbar;
+      @apply flex flex-row overflow-x-auto scroll-p-2 gap-5 w-full hide-scrollbar;
     }
 
     & ul li {
-      @apply min-w-[230px] flex flex-row items-center p-4 rounded-2xl shadow-light-100/10 transition duration-300 cursor-pointer;
+      @apply relative min-w-[230px] flex flex-col items-center p-4 rounded-2xl shadow-light-100/10 transition-transform duration-300 cursor-pointer;
     }
+
     & ul li:hover {
       @apply shadow-md shadow-light-100/20 scale-[1.02];
     }
 
     & ul li .index {
-      @apply fancy-text mt-2 text-nowrap;
+      @apply absolute top-2 left-2 text-[1.5rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-red-500;
     }
+
     & ul li .prod-name {
-      @apply text-white font-bold text-sm text-center mt-1 line-clamp-2;
+      @apply text-white font-bold text-sm text-center mt-2 line-clamp-2;
     }
 
     & ul li img {
-      @apply w-[127px] h-[130px] rounded-lg object-cover;
+      @apply w-[150px] h-[150px] rounded-lg object-cover;
     }
   }
 
@@ -148,9 +150,6 @@
   }
 }
 
-
-
-
 @layer components {
   .auth-bg {
     @apply min-h-screen flex items-center justify-center;
@@ -184,9 +183,6 @@
     @apply text-light-200 hover:text-white text-sm;
   }
 }
-
-
-
 
 @utility text-gradient {
   @apply bg-linear-to-r from-[#D6C7FF] to-[#AB8BFF] bg-clip-text text-transparent;

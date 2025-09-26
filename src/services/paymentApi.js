@@ -1,24 +1,25 @@
 // services/paymentApi.js
-const API_URL = "http://localhost:5500/api/v1/payments";
+import API_URL from "../../config/config.js";
+import { handleResponse } from "./apiHelper.js";
+
+const PAYPAL_URL = `${API_URL}/api/v1/payments/paypal`;
 
 // Gọi API tạo order PayPal (mapping với dbOrderId)
 export const createPaypalOrder = async (token, dbOrderId) => {
-  const res = await fetch(`${API_URL}/paypal/create`, {
+  const res = await fetch(`${PAYPAL_URL}/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ dbOrderId }), 
+    body: JSON.stringify({ dbOrderId }),
   });
-
-  if (!res.ok) throw new Error("Failed to create PayPal order");
-  return res.json();
+  return handleResponse(res);
 };
 
 // Gọi API capture thanh toán sau khi user quay lại site
 export const capturePaypalOrder = async (token, paypalOrderId, dbOrderId) => {
-  const res = await fetch(`${API_URL}/paypal/capture`, {
+  const res = await fetch(`${PAYPAL_URL}/capture`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -26,10 +27,9 @@ export const capturePaypalOrder = async (token, paypalOrderId, dbOrderId) => {
     },
     body: JSON.stringify({ paypalOrderId, dbOrderId }),
   });
-
-  if (!res.ok) throw new Error("Failed to capture PayPal order");
-  return res.json();
+  return handleResponse(res);
 };
+
 
 
 

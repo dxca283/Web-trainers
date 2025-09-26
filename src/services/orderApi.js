@@ -1,77 +1,53 @@
-const API_URL = "http://localhost:5500/api/v1/orders";
+// src/services/orderApi.js
+import API_URL from "../../config/config.js";
+import { handleResponse } from "./apiHelper.js";
 
+const ORDER_URL = `${API_URL}/api/v1/orders`;
 
-//Thanh toán
+// Thanh toán
 export const checkoutCart = async (token) => {
-  const res = await fetch(`${API_URL}/checkout`, {
+  const res = await fetch(`${ORDER_URL}/checkout`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Không thể thanh toán");
-  }
-
-  return res.json();
+  return handleResponse(res);
 };
 
+// Hủy đơn
 export const cancelOrder = async (token, orderId) => {
-  const res = await fetch(`${API_URL}/cancel/${orderId}`, {
+  const res = await fetch(`${ORDER_URL}/cancel/${orderId}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
   });
-
-  if (!res.ok) {
-    const err = await res.json();
-    throw new Error(err.message || "Không thể hủy đơn");
-  }
-
-  return res.json();
+  return handleResponse(res);
 };
+
+// Lấy đơn theo ID
 export const getOrderById = async (token, id) => {
-  const res = await fetch(`${API_URL}/${id}`, {
+  const res = await fetch(`${ORDER_URL}/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse(res);
+};
+
+// Lấy tất cả đơn (có filter status nếu cần)
+export const getOrders = async (token, status) => {
+  const url = new URL(ORDER_URL);
+  if (status) url.searchParams.append("status", status);
+
+  const res = await fetch(url.toString(), {
+    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
     },
   });
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch order");
-  }
-
-  return res.json();
-};
-
-export const getOrders = async (token, status) => {
-  try {
-    const url = new URL(API_URL);
-    if (status) {
-      url.searchParams.append("status", status); // thêm status vào query nếu có
-    }
-
-    const res = await fetch(url.toString(), {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || "Failed to fetch orders");
-    }
-
-    return await res.json();
-  } catch (error) {
-    console.error("getOrders error:", error);
-    throw error;
-  }
+  return handleResponse(res);
 };

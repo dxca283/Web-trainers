@@ -130,7 +130,6 @@ const Navbar = () => {
             )}
 
             {/* Icons */}
-            <FaHeart className="text-xl hover:text-white cursor-pointer" />
             <FaShoppingBag
               className="text-xl hover:text-white cursor-pointer"
               onClick={() => navigate("/order-history")}

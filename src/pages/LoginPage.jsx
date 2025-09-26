@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useAuth } from "../hooks/useAuth.js";
 import Button from "../components/Button.jsx";
+import Spinner from "../components/Spinner.jsx";
 
 const LoginPage = () => {
   const [form, setForm] = useState({
@@ -10,26 +11,31 @@ const LoginPage = () => {
     password: "",
   });
   const [error, setError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
-
   const { login } = useAuth();
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.id]: e.target.value });
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setSubmitting(true);
 
     try {
-      const user = await loginApi(form.username, form.password);
-      login(user);
+      const res = await loginApi(form.username, form.password);
+      login({ user: res.user, token: res.token });
       navigate("/");
     } catch (error) {
       console.error("Đăng nhập thất bại:", error);
       setError(error.message || "Đăng nhập không thành công");
+    } finally {
+      setSubmitting(false);
     }
   };
+
   return (
     <div className="auth-bg">
       <div className="auth-card">
@@ -66,8 +72,12 @@ const LoginPage = () => {
             />
           </div>
           {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-          <Button type="submit">Đăng nhập</Button>
+
+          <Button type="submit" loading={submitting}>
+            Đăng nhập
+          </Button>
         </form>
+
         <div className="auth-links">
           <Link to="/sign-up" className="auth-link">
             Đăng ký
@@ -83,4 +93,5 @@ const LoginPage = () => {
     </div>
   );
 };
+
 export default LoginPage;

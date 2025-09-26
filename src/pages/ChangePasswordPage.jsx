@@ -1,33 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { changePassword } from "../services/authApi.js";
+import { useAuth } from "../hooks/useAuth.js";
+import Button from "../components/Button.jsx";
+import Spinner from "../components/Spinner.jsx";
 
 const ChangePasswordPage = () => {
+  const { token } = useAuth();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
   const navigate = useNavigate();
+
+  // Nếu chưa đăng nhập, redirect
+  useEffect(() => {
+    if (!token) {
+      toast.error("Bạn chưa đăng nhập");
+      navigate("/sign-in");
+    }
+  }, [token, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (newPassword !== confirmPassword) {
       toast.error("Mật khẩu mới không khớp");
       return;
     }
 
     try {
-      const { ok, data } = await changePassword(oldPassword, newPassword);
+      setSubmitting(true);
+      const { ok, data } = await changePassword(token, oldPassword, newPassword);
 
       if (ok) {
         toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
-        setTimeout(() => navigate("/"), 2000);
+        setTimeout(() => navigate("/sign-in"), 2000);
       } else {
         toast.error(data.message || "Đổi mật khẩu thất bại");
       }
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err.message || "Có lỗi xảy ra");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -60,9 +75,9 @@ const ChangePasswordPage = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <button type="submit" className="auth-btn">
-            Xác nhận
-          </button>
+          <Button type="submit" loading={submitting}>
+            {submitting ? <Spinner size="sm" /> : "Xác nhận"}
+          </Button>
         </form>
       </div>
     </div>

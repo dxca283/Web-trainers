@@ -2,22 +2,27 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { resetPassword } from "../services/authApi.js";
+import Button from "../components/Button.jsx";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
   const navigate = useNavigate();
   const query = new URLSearchParams(useLocation().search);
   const token = query.get("token");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (password !== confirmPassword) {
       toast.error("Mật khẩu không khớp");
       return;
     }
 
-     try {
+    try {
+      setSubmitting(true);
       const { ok, data } = await resetPassword(token, password);
 
       if (ok) {
@@ -28,6 +33,8 @@ const ResetPasswordPage = () => {
       }
     } catch (err) {
       toast.error(err.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -52,7 +59,11 @@ const ResetPasswordPage = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <button type="submit" className="auth-btn">Xác nhận</button>
+
+          {/* Dùng Button nâng cấp, tự hiển thị spinner khi submitting */}
+          <Button type="submit" loading={submitting}>
+            Xác nhận
+          </Button>
         </form>
       </div>
     </div>
