@@ -36,41 +36,46 @@ const ProductsPage = () => {
         size,
       };
       const res = await searchProducts(params);
-      res.results?.forEach((p) => updateSearchCount(query.trim(), p).catch(console.error)
-      );
+      if (query.trim() !== "") {
+        res.results?.forEach((p) =>
+          updateSearchCount(query.trim(), p).catch(console.error)
+        );
+      }
+
       return res;
     } else {
       const res_1 = await getProducts({ page, limit });
-      return ({
+      return {
         results: res_1.results.map((p_1) => ({
           ...p_1,
           thumbnail: p_1.product_images?.[0]?.image_url || "/placeholder.png",
-          sizes: p_1.product_sizes
-            ?.map((ps) => ps.sizes?.size_label)
-            .filter(Boolean) || [],
+          sizes:
+            p_1.product_sizes
+              ?.map((ps) => ps.sizes?.size_label)
+              .filter(Boolean) || [],
         })),
         totalPages: res_1.totalPages,
-      });
+      };
     }
   });
 
   useDebounce(
-  () => {
-    // Nếu tất cả filter rỗng, bỏ qua (để không fetch lại)
-    if (
-      query === "" &&
-      category === "" &&
-      minPrice === "" &&
-      maxPrice === "" &&
-      size === ""
-    ) return;
+    () => {
+      // Nếu tất cả filter rỗng, bỏ qua (để không fetch lại)
+      if (
+        query === "" &&
+        category === "" &&
+        minPrice === "" &&
+        maxPrice === "" &&
+        size === ""
+      )
+        return;
 
-    resetPage({ q: query.trim(), category, minPrice, maxPrice, size });
-  },
-  600,
-  [query, category, minPrice, maxPrice, size]
-);
-
+      resetPage({ q: query.trim(), category, minPrice, maxPrice, size });
+    },
+    600,
+    [query, category, minPrice, maxPrice, size]
+  );
 
   const resetFilters = () => {
     setQuery("");
