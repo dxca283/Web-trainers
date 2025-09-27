@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getProducts } from "../services/prodApi.js";
 
 export const usePagination = (fetchFunction, defaultLimit = 12) => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -12,19 +13,23 @@ export const usePagination = (fetchFunction, defaultLimit = 12) => {
 
   // Hàm fetch page với params
   const fetchPage = async (page = 1, extraParams = {}) => {
-    setLoading(true);
-    try {
-      const res = await fetchFunction({ page, limit: defaultLimit, ...extraParams });
-      setData(res.results || []);
-      setTotalPages(res.totalPages || 1);
-    } catch (err) {
-      console.error("Pagination fetch error:", err);
-      setData([]);
-      setTotalPages(1);
-    } finally {
-      setLoading(false);
-    }
-  };
+  setLoading(true);
+  try {
+    const hasFilter = Object.values(extraParams).some(v => v !== "" && v !== null);
+    const res = hasFilter
+      ? await fetchFunction({ page, limit: defaultLimit, ...extraParams })
+      : await getProducts({ page, limit: defaultLimit }); // gọi sản phẩm mặc định
+    setData(res.results || []);
+    setTotalPages(res.totalPages || 1);
+  } catch (err) {
+    console.error("Pagination fetch error:", err);
+    setData([]);
+    setTotalPages(1);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // Reset page về 1 và fetch luôn
   const resetPage = (extraParams = {}) => {

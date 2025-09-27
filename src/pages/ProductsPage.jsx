@@ -36,7 +36,7 @@ const ProductsPage = () => {
         size,
       };
       const res = await searchProducts(params);
-      if (query.trim() !== "") {
+      if (query.trim() !== "" || category || minPrice || maxPrice || size) {
         res.results?.forEach((p) =>
           updateSearchCount(query.trim(), p).catch(console.error)
         );
@@ -61,15 +61,16 @@ const ProductsPage = () => {
 
   useDebounce(
     () => {
-      // Nếu tất cả filter rỗng, bỏ qua (để không fetch lại)
       if (
-        query === "" &&
+        query.trim() === "" &&
         category === "" &&
         minPrice === "" &&
         maxPrice === "" &&
         size === ""
-      )
+      ) {
+        resetPage(); // chỉ gọi getProducts, không gọi searchProducts
         return;
+      }
 
       resetPage({ q: query.trim(), category, minPrice, maxPrice, size });
     },
