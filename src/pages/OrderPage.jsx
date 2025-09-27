@@ -82,7 +82,10 @@ const OrderPage = () => {
         <h1 className="text-3xl font-bold mb-4 text-red-500">
           Không có đơn hàng để hiển thị
         </h1>
-        <Button onClick={() => navigate("/cart")} className="bg-blue-600 hover:bg-blue-700">
+        <Button
+          onClick={() => navigate("/cart")}
+          className="bg-blue-600 hover:bg-blue-700"
+        >
           Quay lại giỏ hàng
         </Button>
       </div>
@@ -138,19 +141,23 @@ const OrderPage = () => {
       {/* Thông tin người dùng */}
       <div className="mb-6 text-gray-400 space-y-1">
         <p>
-          Tên người nhận: <span className="text-white">{user.full_name || "N/A"}</span>
+          Tên người nhận:{" "}
+          <span className="text-white">{user.full_name || "N/A"}</span>
         </p>
         <p>
           Địa chỉ: <span className="text-white">{user.address || "N/A"}</span>
         </p>
         <p>
-          Số điện thoại: <span className="text-white">{user.phone || "N/A"}</span>
+          Số điện thoại:{" "}
+          <span className="text-white">{user.phone || "N/A"}</span>
         </p>
       </div>
 
       {/* Phương thức giao hàng */}
       <div className="mb-6">
-        <label className="block mb-1 text-white font-medium">Phương thức giao hàng:</label>
+        <label className="block mb-1 text-white font-medium">
+          Phương thức giao hàng:
+        </label>
         <select
           value={shippingMethod}
           onChange={(e) => setShippingMethod(e.target.value)}
@@ -170,9 +177,15 @@ const OrderPage = () => {
       {/* Danh sách sản phẩm */}
       <div className="space-y-4">
         {items.map((item) => (
-          <div key={item.id} className="flex items-center bg-gray-800 p-4 rounded-lg">
+          <div
+            key={item.id}
+            className="flex items-center bg-gray-800 p-4 rounded-lg"
+          >
             <img
-              src={item.products?.product_images?.[0]?.image_url || "/placeholder.png"}
+              src={
+                item.products?.product_images?.[0]?.image_url ||
+                "/placeholder.png"
+              }
               alt={item.products?.name || "Sản phẩm"}
               className="w-24 h-24 object-cover rounded"
             />
@@ -192,10 +205,11 @@ const OrderPage = () => {
       <div className="mt-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-white">
-            Tổng: ${(totalWithShipping).toLocaleString("vi-VN")}
+            Tổng: ${totalWithShipping.toLocaleString("vi-VN")}
           </h2>
           <p className="text-gray-400 text-sm">
-            (Giá sp: ${total_amount.toLocaleString("vi-VN")} + Ship: ${shippingFee.toLocaleString("vi-VN")})
+            (Giá sp: ${total_amount.toLocaleString("vi-VN")} + Ship: $
+            {shippingFee.toLocaleString("vi-VN")})
           </p>
         </div>
 
@@ -203,12 +217,12 @@ const OrderPage = () => {
           <Button
             onClick={handlePaypalPayment}
             disabled={loadingPay}
-            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 flex items-center justify-center"
+            className="px-6 py-3 min-w-[140px] text-base bg-blue-600 hover:bg-blue-700"
           >
             {loadingPay ? (
-              <>
-                <Spinner size="sm" className="mr-2" /> Đang thanh toán...
-              </>
+              <span className="inline-block animate-bounce">
+                Đang thanh toán ...
+              </span>
             ) : (
               "Thanh toán"
             )}
@@ -217,12 +231,10 @@ const OrderPage = () => {
           <Button
             onClick={handleCancelOrder}
             disabled={loadingCancel}
-            className="bg-red-600 hover:bg-red-700 px-6 py-3 flex items-center justify-center"
+            className="px-6 py-3 min-w-[140px] text-base bg-red-600 hover:bg-red-700"
           >
             {loadingCancel ? (
-              <>
-                <Spinner size="sm" className="mr-2" /> Đang hủy...
-              </>
+              <span className="inline-block animate-bounce">Đang hủy ...</span>
             ) : (
               "Hủy đơn"
             )}
@@ -230,7 +242,7 @@ const OrderPage = () => {
 
           <Button
             onClick={() => navigate("/")}
-            className="bg-green-600 hover:bg-green-700 px-6 py-3"
+            className="px-6 py-3 min-w-[140px] text-base bg-green-600 hover:bg-green-700"
           >
             Trang chủ
           </Button>
