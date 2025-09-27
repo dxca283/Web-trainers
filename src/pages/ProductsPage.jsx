@@ -1,82 +1,76 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { usePagination } from "../hooks/usePagination.js";
 import ProductCard from "../components/ProductCard";
-import { getProducts, searchProducts } from "../services/prodApi.js";
 import FilterBar from "../components/FilterBar.jsx";
+import { getProducts, searchProducts } from "../services/prodApi.js";
 import { useDebounce } from "react-use";
 import { updateSearchCount } from "../services/appwrite.js";
 import HotProducts from "../components/HotProducts.jsx";
 import useHotProducts from "../hooks/useHotProducts.js";
-import Spinner from "../components/Spinner.jsx"; // import spinner component
+import Spinner from "../components/Spinner.jsx";
 
 const ProductsPage = () => {
-  const [products, setProducts] = useState([]);
   const [hotProducts] = useHotProducts();
-  const [filteredProducts, setFilteredProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [searching, setSearching] = useState(false); // spinner cho search/filter
-
-  // Filter states
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [size, setSize] = useState("");
 
-  // Filter/search products với debounce
-  useDebounce(
-    () => {
-      const fetchFiltered = async () => {
-        const trimmedQuery = query.trim();
-
-        if (!trimmedQuery && !category && !minPrice && !maxPrice && !size) {
-          setFilteredProducts([]);
-          return;
-        }
-
-        setSearching(true);
-        try {
-          const res = await searchProducts({
-            query: trimmedQuery,
-            category,
-            minPrice,
-            maxPrice,
-            size,
-          });
-
-          const results = res.results || [];
-          setFilteredProducts(results);
-
-          
-          results.forEach((product) => {
-            updateSearchCount(trimmedQuery, product).catch((err) =>
-              console.error("Appwrite updateSearchCount error:", err)
-            );
-          });
-        } catch (err) {
-          console.error(err);
-        } finally {
-          setSearching(false);
-        }
+  const {
+    data: products,
+    loading,
+    totalPages,
+    currentPage,
+    goToPage,
+    resetPage,
+  } = usePagination(async ({ page, limit }) => {
+    if (query || category || minPrice || maxPrice || size) {
+      const params = {
+        page,
+        limit,
+        q: query.trim(),
+        category,
+        minPrice,
+        maxPrice,
+        size,
       };
-      fetchFiltered();
-    },
-    600,
-    [query, category, minPrice, maxPrice, size]
-  );
+      const res = await searchProducts(params);
+      res.results?.forEach((p) => updateSearchCount(query.trim(), p).catch(console.error)
+      );
+      return res;
+    } else {
+      const res_1 = await getProducts({ page, limit });
+      return ({
+        results: res_1.results.map((p_1) => ({
+          ...p_1,
+          thumbnail: p_1.product_images?.[0]?.image_url || "/placeholder.png",
+          sizes: p_1.product_sizes
+            ?.map((ps) => ps.sizes?.size_label)
+            .filter(Boolean) || [],
+        })),
+        totalPages: res_1.totalPages,
+      });
+    }
+  });
 
-  useEffect(() => {
-    const fetchProds = async () => {
-      try {
-        const data = await getProducts();
-        setProducts(data || []);
-      } catch (error) {
-        console.error("Error fetching products", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProds();
-  }, []);
+  useDebounce(
+  () => {
+    // Nếu tất cả filter rỗng, bỏ qua (để không fetch lại)
+    if (
+      query === "" &&
+      category === "" &&
+      minPrice === "" &&
+      maxPrice === "" &&
+      size === ""
+    ) return;
+
+    resetPage({ q: query.trim(), category, minPrice, maxPrice, size });
+  },
+  600,
+  [query, category, minPrice, maxPrice, size]
+);
+
 
   const resetFilters = () => {
     setQuery("");
@@ -84,39 +78,17 @@ const ProductsPage = () => {
     setMinPrice("");
     setMaxPrice("");
     setSize("");
-    setFilteredProducts([]);
+    resetPage();
   };
-
-  const displayProducts =
-    filteredProducts.length > 0 || query || minPrice || maxPrice
-      ? filteredProducts
-      : products.map((p) => ({
-          ...p,
-          thumbnail: p.product_images?.[0]?.image_url || "/placeholder.png",
-          sizes:
-            p.product_sizes
-              ?.map((ps) => ps.sizes?.size_label)
-              .filter(Boolean) || [],
-        }));
-
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">
-        <Spinner loading={true} />
-        <p className="text-gray-500 mt-2">Đang tải sản phẩm...</p>
-      </div>
-    );
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-10">
       <h1 className="text-3xl text-gradient font-bold mb-8">
         Sản phẩm tìm kiếm nhiều nhất
       </h1>
-      <HotProducts hotProducts={hotProducts} allProducts={products} />
+      <HotProducts hotProducts={hotProducts} />
 
       <h1 className="text-3xl text-gradient font-bold mb-8">Tất cả sản phẩm</h1>
-
-      {/* Filter/Search bar */}
       <FilterBar
         query={query}
         setQuery={setQuery}
@@ -131,21 +103,37 @@ const ProductsPage = () => {
         onReset={resetFilters}
       />
 
-      {searching ? (
+      {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Spinner loading={true} />
-          <p className="text-gray-500 mt-2">Đang tìm kiếm...</p>
+          <Spinner loading />
+          <p className="text-gray-500 mt-2">Đang tải sản phẩm...</p>
         </div>
-      ) : displayProducts.length === 0 ? (
+      ) : products.length === 0 ? (
         <p className="text-gradient">Chưa có sản phẩm nào.</p>
       ) : (
-        <div className="all-products">
-          <ul>
-            {displayProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
+        <>
+          <div className="all-products">
+            <ul>
+              {products.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </ul>
+          </div>
+
+          <div className="pagination flex justify-center gap-2 mt-6">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                className={`px-3 py-1 border rounded ${
+                  currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-white"
+                }`}
+                onClick={() => goToPage(i + 1)}
+              >
+                {i + 1}
+              </button>
             ))}
-          </ul>
-        </div>
+          </div>
+        </>
       )}
     </div>
   );
