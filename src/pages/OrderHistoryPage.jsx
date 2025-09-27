@@ -166,15 +166,15 @@ const OrderHistoryPage = () => {
                   </div>
                 </div>
 
-                {/* Nút Hủy chỉ hiện khi đang tab Pending */}
+                {/* Nút Hủy */}
                 {status === "pending" && (
                   <Button
                     onClick={() => handleCancelOrder(order.id)}
                     className="bg-red-500 hover:bg-red-600 self-start w-36 flex justify-center items-center relative"
                     disabled={cancellingId === order.id}
-                    loading={cancellingId}
+                    loading={cancellingId === order.id}
                   >
-                    Hủy đơn
+                    {cancellingId === order.id ? "Đang hủy..." : "Hủy đơn"}
                   </Button>
                 )}
               </div>
@@ -190,7 +190,7 @@ const OrderHistoryPage = () => {
                 disabled={!selectedOrder || paying}
                 loading={paying}
               >
-                Thanh toán đơn hàng
+                {paying ? "Đang thanh toán..." : "Thanh toán đơn hàng"}
               </Button>
             </div>
           )}

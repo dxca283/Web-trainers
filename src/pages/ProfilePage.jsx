@@ -99,8 +99,12 @@ const ProfilePage = () => {
             </div>
           ))}
 
-          <Button type="submit" loading={submitting} disabled={isUnchanged || submitting}>
-            Lưu thay đổi
+          <Button
+            type="submit"
+            loading={submitting}
+            disabled={isUnchanged || submitting}
+          >
+            {submitting ? "Đang lưu..." : "Lưu thay đổi"}
           </Button>
         </form>
       </div>

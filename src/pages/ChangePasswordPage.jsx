@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { changePassword } from "../services/authApi.js";
 import { useAuth } from "../hooks/useAuth.js";
 import Button from "../components/Button.jsx";
+import Spinner from "../components/Spinner.jsx";
 
 const ChangePasswordPage = () => {
   const { token, logout } = useAuth();
@@ -11,10 +12,8 @@ const ChangePasswordPage = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
   const navigate = useNavigate();
-
-  
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,8 +32,14 @@ const ChangePasswordPage = () => {
 
       if (ok) {
         toast.success("Đổi mật khẩu thành công! Vui lòng đăng nhập lại.");
-         logout();
-        setTimeout(() => navigate("/sign-in"), 2000);
+        logout();
+
+        setSubmitting(false);
+        setRedirecting(true);
+
+        setTimeout(() => {
+          navigate("/sign-in");
+        }, 1500);
       } else {
         toast.error(data.message || "Đổi mật khẩu thất bại");
       }
@@ -44,6 +49,14 @@ const ChangePasswordPage = () => {
       setSubmitting(false);
     }
   };
+
+  if (redirecting) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <div className="auth-bg">
@@ -74,8 +87,12 @@ const ChangePasswordPage = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <Button type="submit" loading={submitting}>
-            Xác nhận
+          <Button type="submit" disabled={submitting}>
+            {submitting ? (
+              <span className="animate-bounce">Đang xác nhận...</span>
+            ) : (
+              "Xác nhận"
+            )}
           </Button>
         </form>
       </div>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { forgotPassword } from "../services/authApi.js";
 import Button from "../components/Button.jsx";
-import Spinner from "../components/Spinner.jsx";
+import Spinner from "../components/Spinner.jsx"; // thêm Spinner vào page
 import { toast } from "react-toastify";
 
 const ForgotPasswordPage = () => {
@@ -32,7 +32,12 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="auth-bg">
-      <div className="auth-card">
+      <div className="auth-card relative">
+        {submitting && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
+            <Spinner size="lg" />
+          </div>
+        )}
         <h2 className="auth-title">Quên mật khẩu</h2>
         <form onSubmit={handleSubmit} className="auth-form">
           <input
@@ -43,8 +48,8 @@ const ForgotPasswordPage = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <Button type="submit" loading={submitting}>
-            {submitting ? <Spinner size="sm" /> : "Gửi link đặt lại mật khẩu"}
+          <Button type="submit" disabled={submitting}>
+            Gửi link đặt lại mật khẩu
           </Button>
         </form>
       </div>

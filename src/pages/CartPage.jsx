@@ -102,13 +102,17 @@ const CartPage = () => {
             <h2 className="text-xl font-bold text-white">
               Tổng: {total.toLocaleString("vi-VN")} ₫
             </h2>
+
             <Button
               onClick={handleCheckoutClick}
               disabled={loadingCheckout || cart.length === 0}
               className="px-6 py-3 w-48 flex justify-center items-center"
-              loading={loadingCheckout}
             >
-              Xác nhận đơn hàng
+              {loadingCheckout ? (
+                <span className="animate-bounce">Đang xác nhận ...</span>
+              ) : (
+                "Xác nhận đơn hàng"
+              )}
             </Button>
           </div>
         </>

@@ -5,6 +5,8 @@ import { useAuth } from "../hooks/useAuth.js";
 import { createPaypalOrder } from "../services/paymentApi.js";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
+import Button from "../components/Button.jsx";
+import Spinner from "../components/Spinner.jsx";
 
 const shippingFees = {
   fast: 10,
@@ -21,32 +23,27 @@ const OrderPage = () => {
   const [loading, setLoading] = useState(!location.state?.order);
   const [shippingMethod, setShippingMethod] = useState("fast");
   const [deliveryDate, setDeliveryDate] = useState("");
+  const [loadingPay, setLoadingPay] = useState(false);
+  const [loadingCancel, setLoadingCancel] = useState(false);
 
   // Tính ngày giao dự kiến
   useEffect(() => {
-    const calculateDeliveryDate = () => {
-      const today = dayjs();
-      let daysToAdd = 1;
-
-      switch (shippingMethod) {
-        case "standard":
-          daysToAdd = 3;
-          break;
-        case "economy":
-          daysToAdd = 5;
-          break;
-        case "fast":
-        default:
-          daysToAdd = 1;
-      }
-
-      setDeliveryDate(today.add(daysToAdd, "day").format("DD/MM/YYYY"));
-    };
-
-    calculateDeliveryDate();
+    const today = dayjs();
+    let daysToAdd = 1;
+    switch (shippingMethod) {
+      case "standard":
+        daysToAdd = 3;
+        break;
+      case "economy":
+        daysToAdd = 5;
+        break;
+      case "fast":
+      default:
+        daysToAdd = 1;
+    }
+    setDeliveryDate(today.add(daysToAdd, "day").format("DD/MM/YYYY"));
   }, [shippingMethod]);
 
-  
   useEffect(() => {
     const fetchOrder = async () => {
       const query = new URLSearchParams(window.location.search);
@@ -85,12 +82,9 @@ const OrderPage = () => {
         <h1 className="text-3xl font-bold mb-4 text-red-500">
           Không có đơn hàng để hiển thị
         </h1>
-        <button
-          onClick={() => navigate("/cart")}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
+        <Button onClick={() => navigate("/cart")} className="bg-blue-600 hover:bg-blue-700">
           Quay lại giỏ hàng
-        </button>
+        </Button>
       </div>
     );
   }
@@ -101,17 +95,21 @@ const OrderPage = () => {
 
   const handleCancelOrder = async () => {
     try {
+      setLoadingCancel(true);
       await cancelOrder(token, id);
       toast.success("Hủy đơn hàng thành công");
       navigate("/");
     } catch (error) {
       console.error("Cancel order error:", error);
       toast.error("Có lỗi xảy ra khi hủy đơn hàng");
+    } finally {
+      setLoadingCancel(false);
     }
   };
 
   const handlePaypalPayment = async () => {
     try {
+      setLoadingPay(true);
       localStorage.setItem(`shippingMethod-${id}`, shippingMethod);
       const res = await createPaypalOrder(token, id);
       if (res.approve_url) {
@@ -122,6 +120,8 @@ const OrderPage = () => {
     } catch (error) {
       console.error("PayPal error:", error);
       toast.error("Thanh toán thất bại");
+    } finally {
+      setLoadingPay(false);
     }
   };
 
@@ -156,15 +156,9 @@ const OrderPage = () => {
           onChange={(e) => setShippingMethod(e.target.value)}
           className="bg-gray-700 text-white p-2 rounded w-full"
         >
-          <option value="fast">
-            Giao hàng hỏa tốc (trong 24h) - Phí vận chuyển: $10
-          </option>
-          <option value="standard">
-            Giao hàng tiêu chuẩn (2-3 ngày) - Phí vận chuyển: $6
-          </option>
-          <option value="economy">
-            Giao hàng tiết kiệm (4-5 ngày) - Phí vận chuyển: $3
-          </option>
+          <option value="fast">Giao hàng hỏa tốc (24h) - $10</option>
+          <option value="standard">Giao hàng tiêu chuẩn (2-3 ngày) - $6</option>
+          <option value="economy">Giao hàng tiết kiệm (4-5 ngày) - $3</option>
         </select>
       </div>
 
@@ -194,35 +188,52 @@ const OrderPage = () => {
         ))}
       </div>
 
-      {/* Tổng tiền và các nút thao tác */}
+      {/* Tổng tiền + Nút thao tác */}
       <div className="mt-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-2xl font-bold text-white">
             Tổng: ${(totalWithShipping).toLocaleString("vi-VN")}
           </h2>
           <p className="text-gray-400 text-sm">
-            (Giá sản phẩm: ${total_amount.toLocaleString("vi-VN")} + Phí vận chuyển: ${shippingFee.toLocaleString("vi-VN")})
+            (Giá sp: ${total_amount.toLocaleString("vi-VN")} + Ship: ${shippingFee.toLocaleString("vi-VN")})
           </p>
         </div>
+
         <div className="flex gap-4">
-          <button
+          <Button
             onClick={handlePaypalPayment}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            disabled={loadingPay}
+            className="bg-blue-600 hover:bg-blue-700 px-6 py-3 flex items-center justify-center"
           >
-            Thanh toán
-          </button>
-          <button
+            {loadingPay ? (
+              <>
+                <Spinner size="sm" className="mr-2" /> Đang thanh toán...
+              </>
+            ) : (
+              "Thanh toán"
+            )}
+          </Button>
+
+          <Button
             onClick={handleCancelOrder}
-            className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            disabled={loadingCancel}
+            className="bg-red-600 hover:bg-red-700 px-6 py-3 flex items-center justify-center"
           >
-            Hủy đơn
-          </button>
-          <button
+            {loadingCancel ? (
+              <>
+                <Spinner size="sm" className="mr-2" /> Đang hủy...
+              </>
+            ) : (
+              "Hủy đơn"
+            )}
+          </Button>
+
+          <Button
             onClick={() => navigate("/")}
-            className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-700 px-6 py-3"
           >
             Trang chủ
-          </button>
+          </Button>
         </div>
       </div>
     </div>

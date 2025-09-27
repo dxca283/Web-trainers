@@ -119,7 +119,7 @@ const ProductDetailPage = () => {
           />
         </div>
 
-        <Button onClick={handleAddToCart} loading={adding}>
+        <Button onClick={handleAddToCart} loading={adding} type="button">
           Thêm vào giỏ hàng
         </Button>
       </div>

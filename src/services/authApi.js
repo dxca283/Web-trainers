@@ -71,13 +71,21 @@ export const forgotPassword = async (email) => {
       body: JSON.stringify({ email }),
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch {
+      data = { message: text };
+    }
+
     return { ok: res.ok, data };
   } catch (error) {
     console.error(error);
     throw new Error("Không thể kết nối tới server");
   }
 };
+
 
 export const changePassword = async (token, oldPassword, newPassword) => {
   try {
