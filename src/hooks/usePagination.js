@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { getProducts } from "../services/prodApi.js";
 
@@ -11,25 +11,25 @@ export const usePagination = (fetchFunction, defaultLimit = 12) => {
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(pageParam);
 
-  // Hàm fetch page với params
-  const fetchPage = async (page = 1, extraParams = {}) => {
-  setLoading(true);
-  try {
-    const hasFilter = Object.values(extraParams).some(v => v !== "" && v !== null);
-    const res = hasFilter
-      ? await fetchFunction({ page, limit: defaultLimit, ...extraParams })
-      : await getProducts({ page, limit: defaultLimit }); // gọi sản phẩm mặc định
-    setData(res.results || []);
-    setTotalPages(res.totalPages || 1);
-  } catch (err) {
-    console.error("Pagination fetch error:", err);
-    setData([]);
-    setTotalPages(1);
-  } finally {
-    setLoading(false);
-  }
-};
+  const isMounted = useRef(false); // dùng để tránh fetch lần 2 khi mount
 
+  const fetchPage = async (page = 1, extraParams = {}) => {
+    setLoading(true);
+    try {
+      const hasFilter = Object.values(extraParams).some(v => v !== "" && v !== null);
+      const res = hasFilter
+        ? await fetchFunction({ page, limit: defaultLimit, ...extraParams })
+        : await getProducts({ page, limit: defaultLimit }); // sản phẩm mặc định
+      setData(res.results || []);
+      setTotalPages(res.totalPages || 1);
+    } catch (err) {
+      console.error("Pagination fetch error:", err);
+      setData([]);
+      setTotalPages(1);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Reset page về 1 và fetch luôn
   const resetPage = (extraParams = {}) => {
@@ -37,10 +37,17 @@ export const usePagination = (fetchFunction, defaultLimit = 12) => {
     fetchPage(1, extraParams);
   };
 
-  // Sync URL khi currentPage thay đổi
+  // Khi currentPage thay đổi do user click pagination
   useEffect(() => {
+    // Sync URL nhưng không fetch thêm
     setSearchParams({ ...Object.fromEntries(searchParams), page: currentPage });
-    fetchPage(currentPage);
+
+    // Chỉ fetch nếu component đã mount
+    if (isMounted.current) {
+      fetchPage(currentPage);
+    } else {
+      isMounted.current = true; // đánh dấu đã mount
+    }
   }, [currentPage]);
 
   // Sync page state với URL (back/forward browser)
