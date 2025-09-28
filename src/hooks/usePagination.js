@@ -4,27 +4,22 @@ import { getProducts } from "../services/prodApi.js";
 
 export const usePagination = (fetchFunction, defaultLimit = 12) => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const pageParam = parseInt(searchParams.get("page") || "1", 10);
+  const pageParam = parseInt(searchParams.get("page") || "1");
 
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(pageParam);
 
-  const filtersRef = useRef({});
+  const isMounted = useRef(false); 
 
-  const fetchPage = async (page = 1, extraParams = undefined) => {
+  const fetchPage = async (page = 1, extraParams = {}) => {
     setLoading(true);
     try {
-      const params = extraParams ?? filtersRef.current ?? {};
-      const hasFilter = Object.values(params).some(
-        (v) => v !== "" && v !== null && v !== undefined
-      );
-
+      const hasFilter = Object.values(extraParams).some(v => v !== "" && v !== null);
       const res = hasFilter
-        ? await fetchFunction({ page, limit: defaultLimit, ...params })
-        : await getProducts({ page, limit: defaultLimit });
-
+        ? await fetchFunction({ page, limit: defaultLimit, ...extraParams })
+        : await getProducts({ page, limit: defaultLimit }); // sản phẩm mặc định
       setData(res.results || []);
       setTotalPages(res.totalPages || 1);
     } catch (err) {
@@ -36,60 +31,31 @@ export const usePagination = (fetchFunction, defaultLimit = 12) => {
     }
   };
 
+  // Reset page về 1 và fetch luôn
   const resetPage = (extraParams = {}) => {
-    filtersRef.current = extraParams || {};
     setCurrentPage(1);
+    fetchPage(1, extraParams);
   };
 
-  const goToPage = (page) => {
-    setCurrentPage(page);
-  };
-
-
+  // Khi currentPage thay đổi do user click pagination
   useEffect(() => {
-    const newParams = new URLSearchParams();
+    // Sync URL nhưng không fetch thêm
+    setSearchParams({ ...Object.fromEntries(searchParams), page: currentPage });
 
+    // Chỉ fetch nếu component đã mount
+    if (isMounted.current) {
+      fetchPage(currentPage);
+    } else {
+      isMounted.current = true; // đánh dấu đã mount
+    }
+  }, [currentPage]);
 
-    Object.entries(filtersRef.current || {}).forEach(([k, v]) => {
-      if (v !== "" && v !== null && v !== undefined) {
-        newParams.set(k, String(v));
-      }
-    });
-
-    newParams.set("page", String(currentPage));
-    setSearchParams(newParams);
-
-
-    fetchPage(currentPage, filtersRef.current);
-
-  }, [currentPage]); 
-
+  // Sync page state với URL (back/forward browser)
   useEffect(() => {
+    if (pageParam !== currentPage) setCurrentPage(pageParam);
+  }, [pageParam]);
 
-    const urlFilters = Object.fromEntries(
-      [...searchParams.entries()].filter(([k]) => k !== "page")
-    );
+  const goToPage = (page) => setCurrentPage(page);
 
-
-    const urlFiltersStr = JSON.stringify(urlFilters || {});
-    const currentFiltersStr = JSON.stringify(filtersRef.current || {});
-    if (urlFiltersStr !== currentFiltersStr) {
-      filtersRef.current = urlFilters;
-    }
-
-    const urlPage = parseInt(searchParams.get("page") || "1", 10);
-    if (urlPage !== currentPage) {
-      setCurrentPage(urlPage);
-    }
-
-  }, [searchParams]);
-
-  return {
-    data,
-    loading,
-    totalPages,
-    currentPage,
-    goToPage,
-    resetPage,
-  };
+  return { data, loading, totalPages, currentPage, goToPage, resetPage };
 };
