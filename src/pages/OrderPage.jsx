@@ -114,7 +114,7 @@ const OrderPage = () => {
     try {
       setLoadingPay(true);
       localStorage.setItem(`shippingMethod-${id}`, shippingMethod);
-      const res = await createPaypalOrder(token, id);
+      const res = await createPaypalOrder(token, id, shippingFee);
       if (res.approve_url) {
         window.location.href = res.approve_url;
       } else {

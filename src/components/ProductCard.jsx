@@ -21,7 +21,7 @@ const ProductCard = ({ product }) => {
       <div className="p-4">
         <h3 className="font-semibold">{product.name || "Chưa có tên"}</h3>
         <div className="content mt-2">
-          <span>{price.toLocaleString("vi-VN")} ₫</span>
+          <span>{price.toLocaleString("vi-VN")}$</span>
         </div>
       </div>
     </Link>

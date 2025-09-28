@@ -64,7 +64,7 @@ const CartPage = () => {
                     Size: {item.size_label || "N/A"}
                   </p>
                   <p className="text-yellow-400 font-bold">
-                    {item.price.toLocaleString("vi-VN")} ₫
+                    {item.price.toLocaleString("vi-VN")}$
                   </p>
                 </div>
 

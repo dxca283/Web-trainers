@@ -18,12 +18,22 @@ export const CartProvider = ({ children }) => {
   const [loadingCheckout, setLoadingCheckout] = useState(false);
 
   const handleAuthError = (err) => {
-    if (err?.response?.status === 401) {
-      toast.error("Phiên đăng nhập hết hạn, vui lòng đăng nhập lại");
-      logout();
-    } else {
-      toast.error(err.message || "Đã xảy ra lỗi");
+    if (!token) {
+      toast.warn("Bạn cần đăng nhập để thực hiện thao tác này");
+      return;
     }
+
+    if (err?.response?.status === 401) {
+      toast.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại");
+      logout();
+      return;
+    }
+
+    const msg =
+      err?.response?.data?.message ||
+      err?.message ||
+      "Đã xảy ra lỗi không xác định";
+    toast.error(msg);
   };
 
   const fetchCart = async () => {
