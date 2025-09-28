@@ -2,11 +2,20 @@ import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useDebounce } from "react-use";
 import { searchProductNoPagination } from "../services/prodApi.js";
+import { useLocation } from "react-router-dom";
 
-const SearchBarNavbar = ({ onSearch, onSubmitSearch }) => {
+const SearchBarNavbar = ({ onSearch }) => {
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
+  const location = useLocation();
 
+  useEffect(() => {
+    setQuery("");
+    setDebouncedQuery("");
+    onSearch?.([]);
+  }, [location.pathname]);
+
+  
   useDebounce(() => setDebouncedQuery(query), 400, [query]);
 
   useEffect(() => {
@@ -30,7 +39,7 @@ const SearchBarNavbar = ({ onSearch, onSubmitSearch }) => {
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      onSubmitSearch?.(query);
+      return;
     }
   };
 

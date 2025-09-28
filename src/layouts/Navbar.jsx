@@ -19,10 +19,7 @@ const Navbar = () => {
     setSearchResults(results);
   };
 
-  const handleSubmitSearch = (query) => {
-    navigate(`/search?q=${query}`);
-    setSearchResults([]); // clear dropdown khi điều hướng
-  };
+  
 
   return (
     <header className="w-full">
@@ -103,7 +100,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-4 relative">
             <SearchBarNav
               onSearch={handleSearch}
-              onSubmitSearch={handleSubmitSearch}
+              
             />
 
             {/* Dropdown search suggestion */}
