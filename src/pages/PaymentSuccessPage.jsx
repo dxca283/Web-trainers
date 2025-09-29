@@ -77,14 +77,14 @@ const PaymentSuccessPage = () => {
 
         <div className="text-left border-t border-gray-200 pt-4 mt-4">
           <p className="mb-1"><strong>Mã đơn hàng:</strong> {orderInfo.id}</p>
-          <p className="mb-1"><strong>Tổng tiền:</strong> {orderInfo.total_amount.toLocaleString()} VND</p>
+          <p className="mb-1"><strong>Tổng tiền:</strong> {orderInfo.total_amount.toLocaleString()}$</p>
           <p className="mb-1"><strong>Trạng thái:</strong> {orderInfo.status}</p>
 
           <h3 className="mt-4 mb-2 font-semibold">Sản phẩm:</h3>
           <ul className="list-disc list-inside space-y-1">
             {orderInfo.order_items.map((item) => (
               <li key={item.id}>
-                {item.products.name} - SL: {item.quantity} - Giá: {Number(item.price).toLocaleString()} VND
+                {item.products.name} - SL: {item.quantity} - Đơn giá: {Number(item.price).toLocaleString()}$
               </li>
             ))}
           </ul>

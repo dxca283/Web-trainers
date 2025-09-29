@@ -122,8 +122,18 @@ const OrderPage = () => {
 
   const { items = [], total_amount, status, id } = order || {};
 
-  const shippingFee = shippingFees[shippingMethod] || 0;
-  const totalWithShipping = Number(total_amount) + shippingFee;
+  const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+  let dynamicShippingFee = shippingFees[shippingMethod] || 0;
+  let additionalFeeMessage = "";
+
+  if (totalQuantity >= 10) {
+    dynamicShippingFee += 4;
+    additionalFeeMessage = `Bạn đặt ${totalQuantity} đôi → phí ship cộng thêm $4`;
+  } else if (totalQuantity >= 5) {
+    dynamicShippingFee += 2;
+    additionalFeeMessage = `Bạn đặt ${totalQuantity} đôi → phí ship cộng thêm $2`;
+  }
+  const totalWithShipping = Number(total_amount) + dynamicShippingFee;
 
   const handleCancelOrder = async () => {
     try {
@@ -167,7 +177,7 @@ const OrderPage = () => {
       const res = await createPaypalOrder(
         token,
         id,
-        shippingFee,
+        dynamicShippingFee,
         shippingAddress
       );
       if (res.approve_url) {
@@ -327,7 +337,7 @@ const OrderPage = () => {
               <h3 className="text-white">{item.products?.name}</h3>
               <p className="text-gray-400">Size: {item.size_label || "N/A"}</p>
               <p className="text-yellow-400 font-bold">
-                Đơn giá: ${(item.price * item.quantity).toLocaleString("vi-VN")}
+                Đơn giá: ${item.price.toLocaleString("vi-VN")}
               </p>
             </div>
             <span className="text-white font-bold px-4">{item.quantity}x</span>
@@ -343,8 +353,13 @@ const OrderPage = () => {
           </h2>
           <p className="text-gray-400 text-sm">
             (Giá sp: ${total_amount.toLocaleString("vi-VN")} + Ship: $
-            {shippingFee.toLocaleString("vi-VN")})
+            {dynamicShippingFee.toLocaleString("vi-VN")})
           </p>
+          {additionalFeeMessage && (
+            <p className="text-red-500 font-semibold mt-1">
+              {additionalFeeMessage}
+            </p>
+          )}
         </div>
 
         <div className="flex gap-4">
