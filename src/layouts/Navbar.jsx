@@ -125,6 +125,11 @@ const Navbar = () => {
                 ))}
               </div>
             )}
+            {/* Icons */}
+            <FaHeart
+              className="text-xl hover:text-white cursor-pointer"
+              onClick={() => navigate("/favorite-items")}
+            />
 
             {/* Icons */}
             <FaShoppingBag

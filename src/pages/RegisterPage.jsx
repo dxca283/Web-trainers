@@ -50,16 +50,53 @@ const RegisterPage = () => {
         <h2 className="auth-title">Đăng ký</h2>
         <form className="auth-form" onSubmit={handleSubmit}>
           {[
-            { id: "full_name", label: "Họ và tên", type: "text", autoComplete: "name" },
-            { id: "username", label: "Username", type: "text", autoComplete: "username" },
-            { id: "email", label: "Email", type: "email", autoComplete: "email" },
-            { id: "phone", label: "Số điện thoại", type: "tel", autoComplete: "tel" },
-            { id: "password", label: "Mật khẩu", type: "password", autoComplete: "new-password" },
-            { id: "confirmPassword", label: "Nhập lại mật khẩu", type: "password", autoComplete: "new-password" },
-            { id: "address", label: "Địa chỉ", type: "text", autoComplete: "street-address" },
+            {
+              id: "full_name",
+              label: "Họ và tên",
+              type: "text",
+              autoComplete: "name",
+            },
+            {
+              id: "username",
+              label: "Username",
+              type: "text",
+              autoComplete: "username",
+            },
+            {
+              id: "email",
+              label: "Email",
+              type: "email",
+              autoComplete: "email",
+            },
+            {
+              id: "phone",
+              label: "Số điện thoại",
+              type: "tel",
+              autoComplete: "tel",
+            },
+            {
+              id: "password",
+              label: "Mật khẩu",
+              type: "password",
+              autoComplete: "new-password",
+            },
+            {
+              id: "confirmPassword",
+              label: "Nhập lại mật khẩu",
+              type: "password",
+              autoComplete: "new-password",
+            },
+            {
+              id: "address",
+              label: "Địa chỉ",
+              type: "text",
+              autoComplete: "street-address",
+            },
           ].map(({ id, label, type, autoComplete }) => (
             <div key={id}>
-              <label htmlFor={id} className="auth-label">{label}</label>
+              <label htmlFor={id} className="auth-label">
+                {label}
+              </label>
               <input
                 type={type}
                 id={id}
@@ -72,15 +109,22 @@ const RegisterPage = () => {
               />
             </div>
           ))}
-
-          <Button type="submit" loading={submitting}>
-            Đăng ký
+          <Button type="submit">
+            {submitting ? (
+              <span className="animate-bounce">Đang xác nhận ...</span>
+            ) : (
+              "Đăng ký"
+            )}
           </Button>
         </form>
 
         <div className="auth-links">
-          <Link to="/sign-in" className="auth-link">Đăng nhập</Link>
-          <Link to="/" className="auth-link">Về trang chủ</Link>
+          <Link to="/sign-in" className="auth-link">
+            Đăng nhập
+          </Link>
+          <Link to="/" className="auth-link">
+            Về trang chủ
+          </Link>
         </div>
       </div>
     </div>

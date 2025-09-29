@@ -17,6 +17,7 @@ import PaymentCancelPage from "../pages/PaymentCancelPage";
 import ConfirmOrderPage from "../pages/ConfirmOrderPage";
 import OrderHistoryPage from "../pages/OrderHistoryPage";
 import ProfilePage from "../pages/ProfilePage";
+import VerifyAccountPage from "../pages/VerifyAccountPage";
 
 export const routes = [
   {
@@ -53,15 +54,18 @@ export const routes = [
       },
       { path: "sign-in", element: <LoginPage /> },
       { path: "sign-up", element: <RegisterPage /> },
-      { path: "edit-profile", element: (
-        <ProtectedRoute>
-          <ProfilePage />
-        </ProtectedRoute>
-      )
-    },
+      {
+        path: "edit-profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
       { path: "forgot-password", element: <ForgotPasswordPage /> },
       { path: "reset-password", element: <ResetPasswordPage /> },
       { path: "check-email", element: <CheckEmailPage /> },
+      { path: "verify-account", element: <VerifyAccountPage /> },
       {
         path: "change-password",
         element: (

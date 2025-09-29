@@ -2,17 +2,17 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "../hooks/useAuth.js";
 import { getOrders, cancelOrder } from "../services/orderApi.js";
-import { createPaypalOrder } from "../services/paymentApi.js";
-import Spinner from "../components/Spinner.jsx";
 import Button from "../components/Button.jsx";
+import { useNavigate } from "react-router-dom";
+import Spinner from "../components/Spinner.jsx";
 
 const OrderHistoryPage = () => {
   const { token } = useAuth();
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState("paid");
   const [selectedOrder, setSelectedOrder] = useState(null);
-  const [paying, setPaying] = useState(false);
   const [cancellingId, setCancellingId] = useState(null);
 
   useEffect(() => {
@@ -35,25 +35,13 @@ const OrderHistoryPage = () => {
     setSelectedOrder((prev) => (prev === orderId ? null : orderId));
   };
 
-  const handlePay = async () => {
+  const handleGoToConfirm = () => {
     if (!selectedOrder) {
       toast.error("Vui lòng chọn một đơn hàng để thanh toán.");
       return;
     }
-    try {
-      setPaying(true);
-      const data = await createPaypalOrder(token, selectedOrder);
-      if (data.approve_url) {
-        window.location.href = data.approve_url;
-      } else {
-        toast.error("Không tìm thấy link thanh toán PayPal.");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.message);
-    } finally {
-      setPaying(false);
-    }
+    // Chuyển sang confirm-order page với orderId
+    navigate(`/confirm-order?order_id=${selectedOrder}`);
   };
 
   const handleCancelOrder = async (orderId) => {
@@ -181,16 +169,15 @@ const OrderHistoryPage = () => {
             ))}
           </div>
 
-          {/* Nút thanh toán */}
+          {/* Nút Thanh toán */}
           {status === "pending" && (
             <div className="mt-6 text-right">
               <Button
-                onClick={handlePay}
+                onClick={handleGoToConfirm}
                 className="bg-green-500 hover:bg-green-600 w-48 flex justify-center items-center relative"
-                disabled={!selectedOrder || paying}
-                loading={paying}
+                disabled={!selectedOrder}
               >
-                {paying ? "Đang thanh toán..." : "Thanh toán đơn hàng"}
+                Thanh toán đơn hàng
               </Button>
             </div>
           )}

@@ -5,14 +5,14 @@ import { handleResponse } from "./apiHelper.js";
 const PAYPAL_URL = `${API_URL}/api/v1/payments/paypal`;
 
 // Gọi API tạo order PayPal (mapping với dbOrderId)
-export const createPaypalOrder = async (token, dbOrderId, shippingFee = 0) => {
+export const createPaypalOrder = async (token, dbOrderId, shippingFee = 0,shippingAddress ) => {
   const res = await fetch(`${PAYPAL_URL}/create`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ dbOrderId, shippingFee }),
+    body: JSON.stringify({ dbOrderId, shippingFee, shippingAddress }),
   });
   return handleResponse(res);
 };

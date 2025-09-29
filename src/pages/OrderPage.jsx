@@ -6,7 +6,6 @@ import { createPaypalOrder } from "../services/paymentApi.js";
 import { toast } from "react-toastify";
 import dayjs from "dayjs";
 import Button from "../components/Button.jsx";
-import Spinner from "../components/Spinner.jsx";
 
 const shippingFees = {
   fast: 10,
@@ -26,6 +25,14 @@ const OrderPage = () => {
   const [loadingPay, setLoadingPay] = useState(false);
   const [loadingCancel, setLoadingCancel] = useState(false);
 
+  // --- State cho địa chỉ theo chuẩn PayPal ---
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [city, setCity] = useState("");
+  const [stateProvince, setStateProvince] = useState("");
+  const [postalCode, setPostalCode] = useState("");
+  const [countryCode, setCountryCode] = useState("VN");
+
   // Tính ngày giao dự kiến
   useEffect(() => {
     const today = dayjs();
@@ -44,8 +51,12 @@ const OrderPage = () => {
     setDeliveryDate(today.add(daysToAdd, "day").format("DD/MM/YYYY"));
   }, [shippingMethod]);
 
+  // Lấy order từ query
+  // Lấy order từ state hoặc fetch từ API
   useEffect(() => {
     const fetchOrder = async () => {
+      if (order) return; // Nếu đã có order từ Cart, không fetch nữa
+
       const query = new URLSearchParams(window.location.search);
       const orderId = query.get("order_id");
       if (!orderId) {
@@ -56,7 +67,24 @@ const OrderPage = () => {
       try {
         setLoading(true);
         const data = await getOrderById(token, Number(orderId));
-        setOrder(data);
+
+        // map lại structure giống Cart → OrderPage
+        const mappedOrder = {
+          ...data,
+          items: data.order_items?.map((item) => ({
+            id: item.id,
+            product_id: item.product_id,
+            size_id: item.size_id,
+            quantity: item.quantity,
+            price: item.price,
+            products: item.products,
+            size_label: item.sizes?.size_label || "N/A",
+          })),
+          total_amount: data.total_amount,
+          status: data.status,
+        };
+
+        setOrder(mappedOrder);
       } catch (err) {
         console.error("Fetch order error:", err);
         toast.error("Không tìm thấy đơn hàng.");
@@ -65,7 +93,7 @@ const OrderPage = () => {
       }
     };
 
-    if (!order) fetchOrder();
+    fetchOrder();
   }, [order, token]);
 
   if (loading) {
@@ -92,7 +120,8 @@ const OrderPage = () => {
     );
   }
 
-  const { items, total_amount, status, id } = order;
+  const { items = [], total_amount, status, id } = order || {};
+
   const shippingFee = shippingFees[shippingMethod] || 0;
   const totalWithShipping = total_amount + shippingFee;
 
@@ -111,10 +140,36 @@ const OrderPage = () => {
   };
 
   const handlePaypalPayment = async () => {
+    if (
+      !addressLine1 ||
+      !city ||
+      !stateProvince ||
+      !postalCode ||
+      !countryCode
+    ) {
+      toast.error("Vui lòng điền đầy đủ thông tin địa chỉ");
+      return;
+    }
+
     try {
       setLoadingPay(true);
       localStorage.setItem(`shippingMethod-${id}`, shippingMethod);
-      const res = await createPaypalOrder(token, id, shippingFee);
+
+      const shippingAddress = {
+        address_line_1: addressLine1,
+        address_line_2: addressLine2,
+        admin_area_2: city,
+        admin_area_1: stateProvince,
+        postal_code: postalCode,
+        country_code: countryCode,
+      };
+
+      const res = await createPaypalOrder(
+        token,
+        id,
+        shippingFee,
+        shippingAddress
+      );
       if (res.approve_url) {
         window.location.href = res.approve_url;
       } else {
@@ -134,23 +189,102 @@ const OrderPage = () => {
       <p className="mb-2 text-gray-400">
         Mã đơn hàng: <span className="text-white">{id}</span>
       </p>
-      <p className="mb-2 text-gray-400">
+      <p className="mb-6 text-gray-400">
         Trạng thái: <span className="text-yellow-400">{status}</span>
       </p>
 
-      {/* Thông tin người dùng */}
-      <div className="mb-6 text-gray-400 space-y-1">
+      {/* Thông tin người nhận */}
+      <div className="mb-6 text-gray-400 space-y-3">
+        <h2 className="text-white font-semibold mb-2">Thông tin người nhận</h2>
         <p>
-          Tên người nhận:{" "}
-          <span className="text-white">{user.full_name || "N/A"}</span>
+          Tên: <span className="text-white">{user.full_name || "N/A"}</span>
         </p>
         <p>
-          Địa chỉ: <span className="text-white">{user.address || "N/A"}</span>
+          Điện thoại: <span className="text-white">{user.phone || "N/A"}</span>
         </p>
-        <p>
-          Số điện thoại:{" "}
-          <span className="text-white">{user.phone || "N/A"}</span>
-        </p>
+      </div>
+
+      {/* Form nhập địa chỉ */}
+      <div className="mb-6 text-gray-400 space-y-3">
+        <h2 className="text-white font-semibold mb-2">Địa chỉ giao hàng</h2>
+
+        <div>
+          <label className="block text-white mb-1">
+            Đường, số nhà (address_line_1):
+          </label>
+          <input
+            type="text"
+            value={addressLine1}
+            onChange={(e) => setAddressLine1(e.target.value)}
+            placeholder="Số nhà, tên đường"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-white mb-1">
+            Địa chỉ thêm (address_line_2, tùy chọn):
+          </label>
+          <input
+            type="text"
+            value={addressLine2}
+            onChange={(e) => setAddressLine2(e.target.value)}
+            placeholder="Tầng, căn hộ…"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-white mb-1">
+            Thành phố (admin_area_2):
+          </label>
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Hà Nội, Hồ Chí Minh…"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-white mb-1">
+            Tỉnh / Bang (admin_area_1):
+          </label>
+          <input
+            type="text"
+            value={stateProvince}
+            onChange={(e) => setStateProvince(e.target.value)}
+            placeholder="Hà Nội, HCM…"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-white mb-1">
+            Mã bưu chính (postal_code):
+          </label>
+          <input
+            type="text"
+            value={postalCode}
+            onChange={(e) => setPostalCode(e.target.value)}
+            placeholder="100000"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block text-white mb-1">
+            Quốc gia (country_code):
+          </label>
+          <input
+            type="text"
+            value={countryCode}
+            onChange={(e) => setCountryCode(e.target.value.toUpperCase())}
+            placeholder="VN"
+            className="w-full bg-gray-700 text-white p-2 rounded"
+          />
+        </div>
       </div>
 
       {/* Phương thức giao hàng */}

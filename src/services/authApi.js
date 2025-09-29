@@ -105,3 +105,28 @@ export const changePassword = async (token, oldPassword, newPassword) => {
     throw new Error("Không thể kết nối tới server");
   }
 };
+
+export const verifyAccount = async (token) => {
+  try {
+    const res = await fetch(
+      `${API_URL}/api/v1/auth/verify-account?token=${token}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || "Xác thực thất bại");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message || "Không thể kết nối tới server");
+  }
+};
