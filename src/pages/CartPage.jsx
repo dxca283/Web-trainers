@@ -102,7 +102,7 @@ const CartPage = () => {
 
           <div className="mt-10 flex justify-between items-center">
             <h2 className="text-xl font-bold text-white">
-              Tổng: {total.toLocaleString("vi-VN")} ₫
+              Tổng: {total.toLocaleString("vi-VN")}$
             </h2>
 
             <Button
