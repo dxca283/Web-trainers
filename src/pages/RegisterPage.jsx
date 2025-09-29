@@ -35,8 +35,8 @@ const RegisterPage = () => {
       const { confirmPassword, ...userData } = form;
       await registerApi(userData);
 
-      toast.success("Đăng ký thành công! Vui lòng đăng nhập.");
-      navigate("/sign-in");
+      toast.success("Đăng ký thành công! Vui lòng xác thực email.");
+      navigate("/verify-notice", { state: { email: form.email } });
     } catch (err) {
       toast.error(err.message || "Đăng ký thất bại");
     } finally {

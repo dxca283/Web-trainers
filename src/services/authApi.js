@@ -130,3 +130,25 @@ export const verifyAccount = async (token) => {
     throw new Error(err.message || "Không thể kết nối tới server");
   }
 };
+
+
+export const resendVerifyApi = async (email) => {
+  try {
+    const res = await fetch(`${API_URL}/api/v1/auth/resend-verify-email`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return data;
+    } else {
+      throw new Error(data.message || "Gửi lại email xác thực thất bại");
+    }
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message || "Không thể kết nối tới server");
+  }
+};

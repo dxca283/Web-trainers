@@ -18,6 +18,7 @@ import ConfirmOrderPage from "../pages/ConfirmOrderPage";
 import OrderHistoryPage from "../pages/OrderHistoryPage";
 import ProfilePage from "../pages/ProfilePage";
 import VerifyAccountPage from "../pages/VerifyAccountPage";
+import VerifyNoticePage from "../pages/VerifyNoticePage";
 
 export const routes = [
   {
@@ -54,6 +55,10 @@ export const routes = [
       },
       { path: "sign-in", element: <LoginPage /> },
       { path: "sign-up", element: <RegisterPage /> },
+      {
+        path: "verify-notice",
+        element: <VerifyNoticePage />,
+      },
       {
         path: "edit-profile",
         element: (
