@@ -123,7 +123,7 @@ const OrderPage = () => {
   const { items = [], total_amount, status, id } = order || {};
 
   const shippingFee = shippingFees[shippingMethod] || 0;
-  const totalWithShipping = total_amount + shippingFee;
+  const totalWithShipping = Number(total_amount) + shippingFee;
 
   const handleCancelOrder = async () => {
     try {

@@ -140,7 +140,7 @@ const OrderHistoryPage = () => {
                     </p>
                     <p>
                       <span className="font-semibold">Tổng tiền:</span>{" "}
-                      {order.total_amount.toLocaleString("vi-VN")} ₫
+                      {order.total_amount.toLocaleString("vi-VN")} $
                     </p>
                     <h2 className="font-semibold mt-2">Sản phẩm:</h2>
                     <ul className="ml-4 list-disc">
