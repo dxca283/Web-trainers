@@ -124,15 +124,18 @@ const OrderPage = () => {
 
   const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
   let dynamicShippingFee = shippingFees[shippingMethod] || 0;
-  let additionalFeeMessage = "";
 
-  if (totalQuantity >= 10) {
-    dynamicShippingFee += 4;
-    additionalFeeMessage = `Bạn đặt ${totalQuantity} đôi → phí ship cộng thêm $4`;
-  } else if (totalQuantity >= 5) {
-    dynamicShippingFee += 2;
-    additionalFeeMessage = `Bạn đặt ${totalQuantity} đôi → phí ship cộng thêm $2`;
+  
+  const extraFeeUnits = Math.floor(totalQuantity / 5);
+  const extraFee = extraFeeUnits * 2;
+
+  dynamicShippingFee += extraFee;
+
+  let additionalFeeMessage = "";
+  if (extraFee > 0) {
+    additionalFeeMessage = `Bạn đặt ${totalQuantity} đôi → phí ship cộng thêm $${extraFee}`;
   }
+
   const totalWithShipping = Number(total_amount) + dynamicShippingFee;
 
   const handleCancelOrder = async () => {
