@@ -39,11 +39,11 @@ const FavoriteProductsPage = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-4xl text-gradient text-center font-semibold mb-4">
+      <h2 className="text-5xl text-gradient text-center font-semibold mb-4">
         Sản phẩm yêu thích
       </h2>
       {favorites.length === 0 ? (
-        <p>Chưa có sản phẩm yêu thích nào.</p>
+        <p className="text-3xl text-gradient">Chưa có sản phẩm yêu thích nào.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {favorites.map((f) => (
