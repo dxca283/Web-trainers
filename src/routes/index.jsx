@@ -19,6 +19,7 @@ import OrderHistoryPage from "../pages/OrderHistoryPage";
 import ProfilePage from "../pages/ProfilePage";
 import VerifyAccountPage from "../pages/VerifyAccountPage";
 import VerifyNoticePage from "../pages/VerifyNoticePage";
+import FavoriteProductPage from "../pages/FavoriteProductPage";
 
 export const routes = [
   {
@@ -64,6 +65,14 @@ export const routes = [
         element: (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "favorite-items",
+        element: (
+          <ProtectedRoute>
+            <FavoriteProductPage />
           </ProtectedRoute>
         ),
       },

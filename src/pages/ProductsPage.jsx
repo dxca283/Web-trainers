@@ -111,7 +111,7 @@ const ProductsPage = () => {
 
       {loading ? (
         <div className="flex justify-center items-center h-64">
-          <Spinner loading />
+          <Spinner  />
           <p className="text-gray-500 mt-2">Đang tải sản phẩm...</p>
         </div>
       ) : products.length === 0 ? (
