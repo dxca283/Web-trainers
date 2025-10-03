@@ -60,6 +60,7 @@ const FilterBar = ({
 
       <input
         type="number"
+        min={0}
         value={minPrice}
         onChange={(e) => setMinPrice(e.target.value)}
         placeholder="Giá từ"
@@ -68,6 +69,7 @@ const FilterBar = ({
 
       <input
         type="number"
+        min={0}
         value={maxPrice}
         onChange={(e) => setMaxPrice(e.target.value)}
         placeholder="Giá đến"
